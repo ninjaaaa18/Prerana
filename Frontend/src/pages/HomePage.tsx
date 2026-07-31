@@ -20,10 +20,11 @@ export const HomePage: React.FC = () => {
         className="text-center space-y-4 max-w-3xl mx-auto"
       >
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-          Scalable Production Architecture
+          Prerana
         </h1>
         <p className="text-slate-400 text-lg">
-          React 19, Vite, Tailwind CSS v4, TypeScript, React Router, TanStack Query, Zod & Express Backend.
+          AI-powered learning platform delivering personalized, interactive study experiences for
+          students, teachers, parents, and admins.
         </p>
         <div className="flex justify-center gap-4 pt-4">
           <Button variant="primary" size="lg">

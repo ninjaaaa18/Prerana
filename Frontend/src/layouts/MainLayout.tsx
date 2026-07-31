@@ -10,7 +10,7 @@ export const MainLayout: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 font-bold text-xl text-indigo-400">
             <Layout className="w-6 h-6" />
-            <span>App</span>
+            <span>Prerana</span>
           </Link>
           <nav className="flex items-center gap-4">
             <Link
@@ -45,7 +45,7 @@ export const MainLayout: React.FC = () => {
 
       <footer className="border-t border-slate-800 bg-slate-900/30 py-6">
         <div className="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
-          Clean Production-Ready Architecture &copy; {new Date().getFullYear()}
+          Prerana — AI-Powered Learning Platform &copy; {new Date().getFullYear()}
         </div>
       </footer>
     </div>
