@@ -1,0 +1,35 @@
+export const COLORS = {
+  primary: {
+    50: '#eef2ff',
+    100: '#e0e7ff',
+    200: '#c7d2fe',
+    300: '#a5b4fc',
+    400: '#818cf8',
+    500: '#6366f1',
+    600: '#4f46e5',
+    700: '#4338ca',
+    800: '#3730a3',
+    900: '#312e81',
+    DEFAULT: '#6366f1',
+  },
+  accents: {
+    emerald: '#10b981',
+    amber: '#f59e0b',
+    coral: '#ff6b6b',
+    sky: '#38bdf8',
+    violet: '#8b5cf6',
+  },
+  status: {
+    success: '#10b981',
+    warning: '#f59e0b',
+    danger: '#ef4444',
+    info: '#38bdf8',
+  },
+  neutral: {
+    background: '#0b0f19',
+    card: '#111827',
+    border: '#1f2937',
+    foreground: '#f8fafc',
+    muted: '#94a3b8',
+  },
+};

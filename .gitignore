@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+build/
+.vite/
+coverage/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+!.env.example
+!**/.env.example
+
+# Cache
+.cache/
+.eslintcache
+*.tsbuildinfo
+
+# Prisma
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+prisma/dev.db
+prisma/dev.db-journal
+prisma/*.db
+
+# Uploads (keep folder structure via .gitkeep)
+**/uploads/*
+!**/uploads/.gitkeep
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Operating System
+.DS_Store
+Thumbs.db
+desktop.ini

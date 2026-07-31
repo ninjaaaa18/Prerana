@@ -1,0 +1,34 @@
+export const THEME = {
+  fonts: {
+    primary: "'Poppins', sans-serif",
+    display: "'Fredoka', cursive, sans-serif",
+  },
+  radius: {
+    sm: '0.375rem',
+    md: '0.5rem',
+    lg: '0.75rem',
+    xl: '1rem',
+    '2xl': '1.5rem',
+    full: '9999px',
+  },
+  zIndex: {
+    hide: -1,
+    auto: 'auto',
+    base: 0,
+    docked: 10,
+    dropdown: 1000,
+    sticky: 1100,
+    banner: 1200,
+    overlay: 1300,
+    modal: 1400,
+    popover: 1500,
+    toast: 1600,
+    tooltip: 1700,
+  },
+  transitions: {
+    fast: '150ms cubic-bezier(0.4, 0, 0.2, 1)',
+    normal: '250ms cubic-bezier(0.4, 0, 0.2, 1)',
+    slow: '350ms cubic-bezier(0.4, 0, 0.2, 1)',
+    bounce: '500ms cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+  },
+};
