@@ -32,7 +32,10 @@ export const AppRoutes: React.FC = () => {
         <Route path="subjects" element={<PlaceholderPage title="Subjects" />} />
         <Route path="ai-studio" element={<PlaceholderPage title="AI Studio" />} />
         <Route path="library" element={<PlaceholderPage title="Library" />} />
+        <Route path="assessments" element={<PlaceholderPage title="Assessments" />} />
         <Route path="progress" element={<PlaceholderPage title="Progress" />} />
+        <Route path="teach" element={<PlaceholderPage title="Teach" />} />
+        <Route path="admin" element={<PlaceholderPage title="Admin Console" />} />
         <Route path="settings" element={<PlaceholderPage title="Settings" />} />
         <Route path="profile" element={<PlaceholderPage title="Profile" />} />
       </Route>
