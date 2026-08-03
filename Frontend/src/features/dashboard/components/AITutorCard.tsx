@@ -58,7 +58,7 @@ export const AITutorCard: React.FC<AITutorCardProps> = ({ className }) => {
         </ul>
 
         <Link
-          to="/app/ai-studio"
+          to="/app/ai-studio/chat/session-1"
           className={cn(buttonVariants({ size: 'lg' }), 'mt-auto w-full sm:w-auto')}
         >
           Start AI session

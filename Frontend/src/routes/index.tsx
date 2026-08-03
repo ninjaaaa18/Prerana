@@ -21,6 +21,12 @@ const ChapterDetailPage = lazy(() =>
     default: m.ChapterDetailPage,
   }))
 );
+const AIStudioPage = lazy(() =>
+  import('@/features/ai-studio/pages/AIStudioPage').then((m) => ({ default: m.AIStudioPage }))
+);
+const ChatPage = lazy(() =>
+  import('@/features/ai-studio/pages/ChatPage').then((m) => ({ default: m.ChatPage }))
+);
 const LoginPage = lazy(() =>
   import('@/features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage }))
 );
@@ -64,7 +70,8 @@ export const AppRoutes: React.FC = () => {
         <Route path="subjects" element={<SubjectsPage />} />
         <Route path="subjects/:subjectId" element={<SubjectDetailPage />} />
         <Route path="subjects/:subjectId/chapters/:chapterId" element={<ChapterDetailPage />} />
-        <Route path="ai-studio" element={<PlaceholderPage title="AI Studio" />} />
+        <Route path="ai-studio" element={<AIStudioPage />} />
+        <Route path="ai-studio/chat/:sessionId" element={<ChatPage />} />
         <Route path="library" element={<PlaceholderPage title="Library" />} />
         <Route path="assessments" element={<PlaceholderPage title="Assessments" />} />
         <Route path="progress" element={<PlaceholderPage title="Progress" />} />
