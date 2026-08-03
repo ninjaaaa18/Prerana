@@ -47,6 +47,9 @@ const AssessmentResultsPage = lazy(() =>
     default: m.AssessmentResultsPage,
   }))
 );
+const ProgressPage = lazy(() =>
+  import('@/features/progress/pages/ProgressPage').then((m) => ({ default: m.ProgressPage }))
+);
 const LoginPage = lazy(() =>
   import('@/features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage }))
 );
@@ -97,7 +100,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="assessments/:assessmentId" element={<AssessmentDetailPage />} />
         <Route path="assessments/:assessmentId/take" element={<AssessmentPlayerPage />} />
         <Route path="assessments/:assessmentId/results" element={<AssessmentResultsPage />} />
-        <Route path="progress" element={<PlaceholderPage title="Progress" />} />
+        <Route path="progress" element={<ProgressPage />} />
         <Route path="teach" element={<PlaceholderPage title="Teach" />} />
         <Route path="admin" element={<PlaceholderPage title="Admin Console" />} />
         <Route path="settings" element={<PlaceholderPage title="Settings" />} />
