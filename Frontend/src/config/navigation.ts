@@ -68,6 +68,8 @@ export const BREADCRUMB_LABELS: Record<string, string> = {
   chat: 'Chat',
   library: 'Library',
   assessments: 'Assessments',
+  take: 'Take',
+  results: 'Results',
   progress: 'Progress',
   teach: 'Teach',
   admin: 'Admin Console',

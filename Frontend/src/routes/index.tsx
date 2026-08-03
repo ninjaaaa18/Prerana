@@ -27,6 +27,26 @@ const AIStudioPage = lazy(() =>
 const ChatPage = lazy(() =>
   import('@/features/ai-studio/pages/ChatPage').then((m) => ({ default: m.ChatPage }))
 );
+const AssessmentsPage = lazy(() =>
+  import('@/features/assessments/pages/AssessmentsPage').then((m) => ({
+    default: m.AssessmentsPage,
+  }))
+);
+const AssessmentDetailPage = lazy(() =>
+  import('@/features/assessments/pages/AssessmentDetailPage').then((m) => ({
+    default: m.AssessmentDetailPage,
+  }))
+);
+const AssessmentPlayerPage = lazy(() =>
+  import('@/features/assessments/pages/AssessmentPlayerPage').then((m) => ({
+    default: m.AssessmentPlayerPage,
+  }))
+);
+const AssessmentResultsPage = lazy(() =>
+  import('@/features/assessments/pages/AssessmentResultsPage').then((m) => ({
+    default: m.AssessmentResultsPage,
+  }))
+);
 const LoginPage = lazy(() =>
   import('@/features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage }))
 );
@@ -73,7 +93,10 @@ export const AppRoutes: React.FC = () => {
         <Route path="ai-studio" element={<AIStudioPage />} />
         <Route path="ai-studio/chat/:sessionId" element={<ChatPage />} />
         <Route path="library" element={<PlaceholderPage title="Library" />} />
-        <Route path="assessments" element={<PlaceholderPage title="Assessments" />} />
+        <Route path="assessments" element={<AssessmentsPage />} />
+        <Route path="assessments/:assessmentId" element={<AssessmentDetailPage />} />
+        <Route path="assessments/:assessmentId/take" element={<AssessmentPlayerPage />} />
+        <Route path="assessments/:assessmentId/results" element={<AssessmentResultsPage />} />
         <Route path="progress" element={<PlaceholderPage title="Progress" />} />
         <Route path="teach" element={<PlaceholderPage title="Teach" />} />
         <Route path="admin" element={<PlaceholderPage title="Admin Console" />} />
