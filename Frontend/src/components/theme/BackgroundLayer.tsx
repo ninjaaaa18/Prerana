@@ -1,18 +1,11 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { SpaceBackground } from '@/components/theme/SpaceBackground';
 
 export interface BackgroundLayerProps {
-  children?: React.ReactNode;
   className?: string;
 }
 
-export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({ children, className }) => {
-  return (
-    <div
-      aria-hidden="true"
-      className={cn('pointer-events-none absolute inset-0 overflow-hidden', className)}
-    >
-      {children}
-    </div>
-  );
+export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({ className }) => {
+  return <SpaceBackground className={cn(className)} />;
 };

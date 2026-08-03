@@ -30,13 +30,13 @@ export const AppShell: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <BackgroundLayer>{/* Universe theme mounts here in a later phase. */}</BackgroundLayer>
+    <div className="relative min-h-screen overflow-x-clip bg-slate-950 text-slate-100">
+      <BackgroundLayer />
 
-      <Sidebar collapsed={isDesktop ? collapsed : true} className="hidden md:flex" />
+      <Sidebar collapsed={isDesktop ? collapsed : true} />
 
       <div
-        className="flex min-h-screen flex-col transition-[padding-left] duration-200 ease-in-out"
+        className="relative z-10 flex min-h-screen flex-col transition-[padding-left] duration-200 ease-in-out"
         style={{ paddingLeft: contentPaddingLeft }}
       >
         <Topbar onToggleSidebar={handleToggleSidebar} />

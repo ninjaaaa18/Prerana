@@ -31,4 +31,17 @@ export const THEME = {
     slow: '350ms cubic-bezier(0.4, 0, 0.2, 1)',
     bounce: '500ms cubic-bezier(0.68, -0.55, 0.265, 1.55)',
   },
+  backdropBlur: {
+    sm: '4px',
+    md: '8px',
+    lg: '12px',
+    xl: '24px',
+  },
+  backgroundLayers: {
+    base: 0,
+    nebula: 1,
+    stars: 2,
+    particles: 3,
+    glow: 4,
+  },
 };

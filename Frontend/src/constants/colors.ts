@@ -33,3 +33,34 @@ export const COLORS = {
     muted: '#94a3b8',
   },
 };
+
+export const GALAXY = {
+  glow: {
+    indigo: { r: 99, g: 102, b: 241 },
+    violet: { r: 139, g: 92, b: 246 },
+    sky: { r: 56, g: 189, b: 248 },
+    pink: { r: 236, g: 72, b: 153 },
+  },
+  gradients: {
+    deepSpace:
+      'radial-gradient(120% 120% at 20% 10%, #151a3a 0%, #0b0f19 55%, #070a12 100%)',
+    nebulaPurple:
+      'radial-gradient(circle at 70% 20%, rgba(139, 92, 246, 0.2) 0%, transparent 60%)',
+    nebulaIndigo:
+      'radial-gradient(circle at 15% 80%, rgba(99, 102, 241, 0.16) 0%, transparent 60%)',
+    nebulaSky:
+      'radial-gradient(circle at 85% 70%, rgba(56, 189, 248, 0.1) 0%, transparent 55%)',
+    nebulaPink:
+      'radial-gradient(circle at 25% 25%, rgba(236, 72, 153, 0.1) 0%, transparent 55%)',
+  },
+  glass: {
+    subtle: 'rgba(255, 255, 255, 0.04)',
+    panel: 'rgba(17, 24, 39, 0.55)',
+    dark: 'rgba(11, 15, 25, 0.6)',
+    border: 'rgba(148, 163, 184, 0.14)',
+  },
+  overlay: {
+    dim: 'rgba(11, 15, 25, 0.6)',
+    deep: 'rgba(11, 15, 25, 0.85)',
+  },
+} as const;
