@@ -1,13 +1,13 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-export interface SidebarSectionProps {
+export interface SidebarGroupProps {
   label: string;
   collapsed?: boolean;
   children: React.ReactNode;
 }
 
-export const SidebarSection: React.FC<SidebarSectionProps> = ({
+export const SidebarGroup: React.FC<SidebarGroupProps> = ({
   label,
   collapsed = false,
   children,

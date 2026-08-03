@@ -4,6 +4,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { NavigationDrawer } from '@/components/layout/NavigationDrawer';
+import { BreadcrumbBar } from '@/components/layout/BreadcrumbBar';
 import { BackgroundLayer } from '@/components/theme/BackgroundLayer';
 import { Spinner } from '@/components/ui/spinner';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -42,6 +43,7 @@ export const AppShell: React.FC = () => {
         <Topbar onToggleSidebar={handleToggleSidebar} />
 
         <main className="flex-1 px-4 pb-24 pt-6 sm:px-6 md:pb-8 lg:px-8 lg:pt-8">
+          <BreadcrumbBar className="mb-6" />
           <Suspense
             fallback={
               <div className="flex items-center justify-center py-24">

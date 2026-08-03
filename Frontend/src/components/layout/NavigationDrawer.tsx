@@ -4,8 +4,9 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
 import { SidebarItem } from './SidebarItem';
-import { SidebarSection } from './SidebarSection';
-import { PRIMARY_NAV_SECTIONS, SECONDARY_NAV_SECTIONS } from '@/config/navigation';
+import { SidebarGroup } from './SidebarGroup';
+import { SidebarFooter } from './SidebarFooter';
+import { MANAGE_NAV_SECTIONS, PRIMARY_NAV_SECTIONS } from '@/config/navigation';
 import { useScrollLock } from '@/hooks/use-scroll-lock';
 
 export interface NavigationDrawerProps {
@@ -22,6 +23,11 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
   const drawerRef = React.useRef<HTMLDivElement>(null);
 
   useScrollLock(open);
+
+  const sections = React.useMemo(
+    () => [...PRIMARY_NAV_SECTIONS, ...MANAGE_NAV_SECTIONS],
+    []
+  );
 
   React.useEffect(() => {
     if (!open) return;
@@ -102,25 +108,16 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
             </div>
 
             <div className="flex-1 space-y-6 overflow-y-auto px-3 py-4">
-              {PRIMARY_NAV_SECTIONS.map((section) => (
-                <SidebarSection key={section.label} label={section.label}>
+              {sections.map((section) => (
+                <SidebarGroup key={section.label} label={section.label}>
                   {section.items.map((item) => (
                     <SidebarItem key={item.route} item={item} onClick={onClose} />
                   ))}
-                </SidebarSection>
+                </SidebarGroup>
               ))}
             </div>
 
-            <div className="shrink-0 space-y-6 border-t border-slate-800/60 px-3 py-4">
-              {SECONDARY_NAV_SECTIONS.map((section) => (
-                <SidebarSection key={section.label} label={section.label}>
-                  {section.items.map((item) => (
-                    <SidebarItem key={item.route} item={item} onClick={onClose} />
-                  ))}
-                </SidebarSection>
-              ))}
-              <p className="px-3 text-xs text-slate-600">Prerana v0.1.0</p>
-            </div>
+            <SidebarFooter />
           </motion.div>
         </div>
       )}
