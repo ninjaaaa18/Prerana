@@ -63,6 +63,7 @@ export const filterSectionsForRole = (sections: NavSection[], role?: Role): NavS
 
 export const BREADCRUMB_LABELS: Record<string, string> = {
   subjects: 'Subjects',
+  chapters: 'Chapters',
   'ai-studio': 'AI Studio',
   library: 'Library',
   assessments: 'Assessments',

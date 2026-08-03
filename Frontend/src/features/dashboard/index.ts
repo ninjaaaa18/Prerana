@@ -1,0 +1,17 @@
+export * from './components/DashboardHero';
+export * from './components/ContinueLearningCard';
+export * from './components/SubjectCard';
+export * from './components/SubjectGrid';
+export * from './components/DailyGoals';
+export * from './components/GoalCard';
+export * from './components/AITutorCard';
+export * from './components/AssessmentList';
+export * from './components/AssessmentCard';
+export * from './components/ActivityTimeline';
+export * from './components/AchievementGrid';
+export * from './components/AchievementCard';
+export * from './components/StatsGrid';
+export * from './components/StatCard';
+export * from './components/DashboardSection';
+export * from './pages/DashboardPage';
+export type * from './types';

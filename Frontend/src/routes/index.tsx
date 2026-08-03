@@ -5,6 +5,22 @@ import { AppShell } from '@/layouts/AppShell';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
 
 const HomePage = lazy(() => import('@/pages/HomePage').then((m) => ({ default: m.HomePage })));
+const DashboardPage = lazy(() =>
+  import('@/features/dashboard/pages/DashboardPage').then((m) => ({ default: m.DashboardPage }))
+);
+const SubjectsPage = lazy(() =>
+  import('@/features/subjects/pages/SubjectsPage').then((m) => ({ default: m.SubjectsPage }))
+);
+const SubjectDetailPage = lazy(() =>
+  import('@/features/subjects/pages/SubjectDetailPage').then((m) => ({
+    default: m.SubjectDetailPage,
+  }))
+);
+const ChapterDetailPage = lazy(() =>
+  import('@/features/subjects/pages/ChapterDetailPage').then((m) => ({
+    default: m.ChapterDetailPage,
+  }))
+);
 const LoginPage = lazy(() =>
   import('@/features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage }))
 );
@@ -43,9 +59,11 @@ export const AppRoutes: React.FC = () => {
 
       <Route path="/app" element={<AppShell />}>
         <Route element={<DashboardLayout />}>
-          <Route index element={<PlaceholderPage title="Home" />} />
+          <Route index element={<DashboardPage />} />
         </Route>
-        <Route path="subjects" element={<PlaceholderPage title="Subjects" />} />
+        <Route path="subjects" element={<SubjectsPage />} />
+        <Route path="subjects/:subjectId" element={<SubjectDetailPage />} />
+        <Route path="subjects/:subjectId/chapters/:chapterId" element={<ChapterDetailPage />} />
         <Route path="ai-studio" element={<PlaceholderPage title="AI Studio" />} />
         <Route path="library" element={<PlaceholderPage title="Library" />} />
         <Route path="assessments" element={<PlaceholderPage title="Assessments" />} />
