@@ -68,6 +68,37 @@ const ForgotPasswordPage = lazy(() =>
 const ResetPasswordPage = lazy(() =>
   import('@/features/auth/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage }))
 );
+const TeacherDashboard = lazy(() =>
+  import('@/features/teach/pages/TeacherDashboard').then((m) => ({ default: m.TeacherDashboard }))
+);
+const TeachSubjectLibrary = lazy(() =>
+  import('@/features/teach/pages/TeachSubjectLibrary').then((m) => ({
+    default: m.TeachSubjectLibrary,
+  }))
+);
+const TeachSubjectDetail = lazy(() =>
+  import('@/features/teach/pages/TeachSubjectDetail').then((m) => ({
+    default: m.TeachSubjectDetail,
+  }))
+);
+const LessonForm = lazy(() =>
+  import('@/features/teach/pages/LessonForm').then((m) => ({ default: m.LessonForm }))
+);
+const ClassList = lazy(() =>
+  import('@/features/teach/pages/ClassList').then((m) => ({ default: m.ClassList }))
+);
+const ClassDetail = lazy(() =>
+  import('@/features/teach/pages/ClassDetail').then((m) => ({ default: m.ClassDetail }))
+);
+const ProgressView = lazy(() =>
+  import('@/features/teach/pages/ProgressView').then((m) => ({ default: m.ProgressView }))
+);
+const AssessmentList = lazy(() =>
+  import('@/features/teach/pages/AssessmentList').then((m) => ({ default: m.AssessmentList }))
+);
+const AssessmentEditor = lazy(() =>
+  import('@/features/teach/pages/AssessmentEditor').then((m) => ({ default: m.AssessmentEditor }))
+);
 const DesignSystemPage = lazy(() =>
   import('@/pages/DesignSystemPage').then((m) => ({ default: m.DesignSystemPage }))
 );
@@ -108,7 +139,16 @@ export const AppRoutes: React.FC = () => {
         <Route path="assessments/:assessmentId/take" element={<AssessmentPlayerPage />} />
         <Route path="assessments/:assessmentId/results" element={<AssessmentResultsPage />} />
         <Route path="progress" element={<ProgressPage />} />
-        <Route path="teach" element={<PlaceholderPage title="Teach" />} />
+        <Route path="teach" element={<TeacherDashboard />} />
+        <Route path="teach/subjects" element={<TeachSubjectLibrary />} />
+        <Route path="teach/subjects/:subjectId" element={<TeachSubjectDetail />} />
+        <Route path="teach/lessons/new" element={<LessonForm />} />
+        <Route path="teach/lessons/:lessonId/edit" element={<LessonForm />} />
+        <Route path="teach/classes" element={<ClassList />} />
+        <Route path="teach/classes/:classId" element={<ClassDetail />} />
+        <Route path="teach/progress" element={<ProgressView />} />
+        <Route path="teach/assessments" element={<AssessmentList />} />
+        <Route path="teach/assessments/:assessmentId" element={<AssessmentEditor />} />
         <Route path="admin" element={<PlaceholderPage title="Admin Console" />} />
         <Route path="settings" element={<PlaceholderPage title="Settings" />} />
         <Route path="profile" element={<PlaceholderPage title="Profile" />} />
