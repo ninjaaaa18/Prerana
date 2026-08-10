@@ -50,6 +50,12 @@ const AssessmentResultsPage = lazy(() =>
 const ProgressPage = lazy(() =>
   import('@/features/progress/pages/ProgressPage').then((m) => ({ default: m.ProgressPage }))
 );
+const LibraryPage = lazy(() =>
+  import('@/features/library/pages/LibraryPage').then((m) => ({ default: m.LibraryPage }))
+);
+const ResourcePage = lazy(() =>
+  import('@/features/library/pages/ResourcePage').then((m) => ({ default: m.ResourcePage }))
+);
 const LoginPage = lazy(() =>
   import('@/features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage }))
 );
@@ -95,7 +101,8 @@ export const AppRoutes: React.FC = () => {
         <Route path="subjects/:subjectId/chapters/:chapterId" element={<ChapterDetailPage />} />
         <Route path="ai-studio" element={<AIStudioPage />} />
         <Route path="ai-studio/chat/:sessionId" element={<ChatPage />} />
-        <Route path="library" element={<PlaceholderPage title="Library" />} />
+        <Route path="library" element={<LibraryPage />} />
+        <Route path="library/:resourceId" element={<ResourcePage />} />
         <Route path="assessments" element={<AssessmentsPage />} />
         <Route path="assessments/:assessmentId" element={<AssessmentDetailPage />} />
         <Route path="assessments/:assessmentId/take" element={<AssessmentPlayerPage />} />
