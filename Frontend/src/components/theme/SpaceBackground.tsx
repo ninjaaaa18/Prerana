@@ -14,12 +14,12 @@ export interface SpaceBackgroundProps {
 export const SpaceBackground: React.FC<SpaceBackgroundProps> = ({ className }) => {
   return (
     <BackgroundContainer variant="fixed" className={cn('z-0', className)}>
-      <NebulaGradient />
-      <GalaxyGlow color="indigo" x="72%" y="-8%" size={560} opacity={0.2} />
-      <GalaxyGlow color="violet" x="8%" y="85%" size={420} opacity={0.14} />
-      <StarField count={140} />
-      <ConstellationLayer />
-      <FloatingParticles count={26} />
+      <NebulaGradient depth={3} />
+      <GalaxyGlow color="indigo" x="72%" y="-8%" size={420} opacity={0.09} />
+      <GalaxyGlow color="violet" x="12%" y="82%" size={280} opacity={0.06} />
+      <StarField count={52} />
+      <ConstellationLayer starCount={10} segmentCount={12} className="opacity-28" />
+      <FloatingParticles count={6} />
     </BackgroundContainer>
   );
 };

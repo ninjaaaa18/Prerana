@@ -17,8 +17,8 @@ interface Star {
 }
 
 export const ConstellationLayer: React.FC<ConstellationLayerProps> = ({
-  starCount = 32,
-  segmentCount = 40,
+  starCount = 18,
+  segmentCount = 18,
   className,
 }) => {
   const reducedMotion = usePrefersReducedMotion();
@@ -28,7 +28,7 @@ export const ConstellationLayer: React.FC<ConstellationLayerProps> = ({
       Array.from({ length: starCount }, (_, i) => ({
         x: Math.random() * 100,
         y: Math.random() * 100,
-        size: Math.random() * 1.8 + 0.8,
+        size: Math.random() * 1.3 + 0.5,
         key: `s-${i}`,
       })),
     [starCount]
@@ -47,8 +47,8 @@ export const ConstellationLayer: React.FC<ConstellationLayerProps> = ({
           y1={a.y}
           x2={b.x}
           y2={b.y}
-          stroke="rgba(148,163,184,0.22)"
-          strokeWidth="0.5"
+          stroke="rgba(148,163,184,0.14)"
+          strokeWidth="0.35"
         />
       );
     }
@@ -70,8 +70,8 @@ export const ConstellationLayer: React.FC<ConstellationLayerProps> = ({
           cx={s.x}
           cy={s.y}
           r={s.size}
-          fill="rgba(226,232,240,0.75)"
-          animate={reducedMotion ? undefined : { opacity: [0.3, 0.9, 0.3] }}
+          fill="rgba(226,232,240,0.7)"
+          animate={reducedMotion ? undefined : { opacity: [0.2, 0.7, 0.2] }}
           transition={{
             duration: 4 + Math.random() * 3,
             repeat: Infinity,

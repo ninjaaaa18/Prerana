@@ -63,7 +63,9 @@ const RegisterPage = lazy(() =>
   import('@/features/auth/pages/RegisterPage').then((m) => ({ default: m.RegisterPage }))
 );
 const ForgotPasswordPage = lazy(() =>
-  import('@/features/auth/pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage }))
+  import('@/features/auth/pages/ForgotPasswordPage').then((m) => ({
+    default: m.ForgotPasswordPage,
+  }))
 );
 const ResetPasswordPage = lazy(() =>
   import('@/features/auth/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage }))
@@ -98,6 +100,22 @@ const AssessmentList = lazy(() =>
 );
 const AssessmentEditor = lazy(() =>
   import('@/features/teach/pages/AssessmentEditor').then((m) => ({ default: m.AssessmentEditor }))
+);
+const ParentDashboard = lazy(() =>
+  import('@/features/parent/pages/ParentDashboard').then((m) => ({ default: m.ParentDashboard }))
+);
+const ChildDetail = lazy(() =>
+  import('@/features/parent/pages/ChildDetail').then((m) => ({ default: m.ChildDetail }))
+);
+const ParentAssessments = lazy(() =>
+  import('@/features/parent/pages/ParentAssessments').then((m) => ({
+    default: m.ParentAssessments,
+  }))
+);
+const ParentActivity = lazy(() =>
+  import('@/features/parent/pages/ParentActivity').then((m) => ({
+    default: m.ParentActivityPage,
+  }))
 );
 const DesignSystemPage = lazy(() =>
   import('@/pages/DesignSystemPage').then((m) => ({ default: m.DesignSystemPage }))
@@ -149,6 +167,10 @@ export const AppRoutes: React.FC = () => {
         <Route path="teach/progress" element={<ProgressView />} />
         <Route path="teach/assessments" element={<AssessmentList />} />
         <Route path="teach/assessments/:assessmentId" element={<AssessmentEditor />} />
+        <Route path="parent" element={<ParentDashboard />} />
+        <Route path="parent/children/:childId" element={<ChildDetail />} />
+        <Route path="parent/assessments" element={<ParentAssessments />} />
+        <Route path="parent/activity" element={<ParentActivity />} />
         <Route path="admin" element={<PlaceholderPage title="Admin Console" />} />
         <Route path="settings" element={<PlaceholderPage title="Settings" />} />
         <Route path="profile" element={<PlaceholderPage title="Profile" />} />
