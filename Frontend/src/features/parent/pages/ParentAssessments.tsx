@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClipboardCheck } from 'lucide-react';
+import { ClipboardCheck, ScanLine, Telescope } from 'lucide-react';
 import { Container } from '@/components/ui/container';
 import { Dropdown } from '@/components/ui/dropdown';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -40,44 +40,61 @@ export const ParentAssessments: React.FC = () => {
 
       <Reveal y={16}>
         <section
-          aria-label="Assessment results"
-          className="relative overflow-hidden rounded-[28px] border border-violet-500/20 bg-slate-950/70 px-6 py-7 shadow-[0_20px_60px_rgba(15,23,42,0.7)] sm:px-8"
+          aria-label="Assessment observatory"
+          className="relative overflow-hidden rounded-[28px] border border-cyan-400/20 bg-[radial-gradient(circle_at_88%_18%,rgba(56,189,248,0.12),transparent_28%),linear-gradient(135deg,rgba(15,23,42,0.96),rgba(16,10,38,0.9))] px-6 py-7 shadow-[0_20px_60px_rgba(15,23,42,0.7)] sm:px-8"
         >
-          <GalaxyGlow color="violet" x="86%" y="-20%" size={320} opacity={0.14} />
-          <GalaxyGlow color="sky" x="18%" y="102%" size={260} opacity={0.1} />
-          <div className="relative flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <GalaxyGlow color="violet" x="86%" y="-20%" size={280} opacity={0.12} />
+          <GalaxyGlow color="sky" x="18%" y="112%" size={220} opacity={0.08} />
+          <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] [background-size:32px_32px]" />
+          <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div className="space-y-2">
-              <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-violet-300">
-                <ClipboardCheck className="h-3.5 w-3.5" aria-hidden="true" />
-                Mission control
+              <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-cyan-300">
+                <Telescope className="h-3.5 w-3.5" aria-hidden="true" />
+                Assessment observatory
               </p>
               <h1 className="font-display text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">
-                Assessment results
+                Mission Results
               </h1>
+              <p className="max-w-xl text-sm leading-relaxed text-slate-400">
+                Track every learning mission your children have completed, from first attempt to breakthrough.
+              </p>
             </div>
-            <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 px-3 py-2 text-sm text-slate-300">
-              {results.length} result{results.length === 1 ? '' : 's'} tracked
+            <div className="flex shrink-0 items-center gap-3 rounded-2xl border border-cyan-400/15 bg-slate-950/55 px-4 py-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-300">
+                <ScanLine className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <div>
+                <p className="font-display text-xl font-extrabold leading-none text-slate-100">{results.length}</p>
+                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Missions tracked</p>
+              </div>
             </div>
           </div>
-          <p className="relative mt-4 max-w-xl text-sm text-slate-400">
-            Scores, grades and trends across every test your children have completed.
-          </p>
         </section>
       </Reveal>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Dropdown label="Child" options={CHILD_FILTERS()} value={childId} onChange={setChildId} />
-        <Dropdown
-          label="Subject"
-          options={[
-            { label: 'All subjects', value: 'all' },
-            ...getSubjectNames().map((name) => ({ label: name, value: name })),
-          ]}
-          value={subjectName}
-          onChange={setSubjectName}
-        />
-        <Dropdown label="Result" options={STATUS_FILTERS} value={status} onChange={setStatus} />
-      </div>
+      <section
+        aria-label="Mission scanner"
+        className="relative overflow-visible rounded-2xl border border-violet-400/15 bg-slate-950/60 p-4 shadow-[0_14px_40px_rgba(15,23,42,0.35)] sm:p-5"
+      >
+        <div className="mb-4 flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(103,232,249,0.9)]" />
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-200">Mission scanner</h2>
+          <span className="ml-auto text-[10px] uppercase tracking-[0.16em] text-slate-600">Filter telemetry</span>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Dropdown label="Child" options={CHILD_FILTERS()} value={childId} onChange={setChildId} />
+          <Dropdown
+            label="Subject"
+            options={[
+              { label: 'All subjects', value: 'all' },
+              ...getSubjectNames().map((name) => ({ label: name, value: name })),
+            ]}
+            value={subjectName}
+            onChange={setSubjectName}
+          />
+          <Dropdown label="Result" options={STATUS_FILTERS} value={status} onChange={setStatus} />
+        </div>
+      </section>
 
       {results.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
