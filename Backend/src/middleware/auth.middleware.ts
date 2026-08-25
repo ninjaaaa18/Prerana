@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config/env';
+import type { Role } from '@prisma/client';
 
 export interface AuthRequest extends Request {
-  user?: string | jwt.JwtPayload;
+  user?: { id: string; role: Role };
 }
 
 export const authenticateToken = (
@@ -11,20 +12,26 @@ export const authenticateToken = (
   res: Response,
   next: NextFunction
 ): void => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers.authorization;
+  const [scheme, token] = authHeader?.split(' ') ?? [];
 
-  if (!token) {
-    res.status(401).json({ message: 'Authentication token required' });
+  if (scheme !== 'Bearer' || !token) {
+    res.status(401).json({ status: 'error', code: 'UNAUTHORIZED', message: 'Authentication required' });
     return;
   }
 
-  jwt.verify(token, config.jwtSecret, (err, user) => {
-    if (err) {
-      res.status(403).json({ message: 'Invalid or expired token' });
+  try {
+    const payload = jwt.verify(token, config.jwtAccessSecret);
+    if (typeof payload === 'string' || payload.type !== 'access' || typeof payload.sub !== 'string' || !isRole(payload.role)) {
+      res.status(401).json({ status: 'error', code: 'UNAUTHORIZED', message: 'Authentication required' });
       return;
     }
-    req.user = user;
+    req.user = { id: payload.sub, role: payload.role };
     next();
-  });
+  } catch {
+    res.status(401).json({ status: 'error', code: 'UNAUTHORIZED', message: 'Authentication required' });
+  }
 };
+
+const isRole = (value: unknown): value is Role =>
+  value === 'student' || value === 'teacher' || value === 'parent' || value === 'admin';

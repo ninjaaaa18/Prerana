@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 
 export interface CustomError extends Error {
   statusCode?: number;
+  code?: string;
+  details?: Record<string, string[]>;
 }
 
 export const errorHandler = (
@@ -11,11 +13,13 @@ export const errorHandler = (
   _next: NextFunction
 ): void => {
   const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+  const isServerError = statusCode >= 500;
 
   res.status(statusCode).json({
     status: 'error',
     statusCode,
-    message,
+    code: err.code || (isServerError ? 'INTERNAL_ERROR' : 'REQUEST_ERROR'),
+    message: isServerError ? 'Internal Server Error' : err.message,
+    ...(err.details ? { details: err.details } : {}),
   });
 };
