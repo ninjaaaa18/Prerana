@@ -21,6 +21,12 @@ const TYPE_STYLES: Record<ParentActivityType, { icon: LucideIcon; className: str
   },
 };
 
+const CHILD_COLORS: Record<string, string> = {
+  Aadhya: '#8b5cf6',
+  Reyansh: '#38bdf8',
+  Kavya: '#ec4899',
+};
+
 export interface ActivityFeedProps {
   activities: ParentActivity[];
   className?: string;
@@ -37,32 +43,35 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities, classNam
   }
 
   return (
-    <ol className={cn('relative space-y-2', className)}>
-      <div className="absolute bottom-2 left-[19px] top-2 w-px bg-gradient-to-b from-violet-500/30 via-slate-700 to-slate-700" aria-hidden="true" />
+    <ol aria-label="Family mission timeline" className={cn('relative space-y-1', className)}>
+      <div className="absolute bottom-7 left-[21px] top-7 w-px bg-gradient-to-b from-cyan-300/60 via-violet-500/30 to-slate-700" aria-hidden="true" />
       {activities.map((item) => {
         const { icon: Icon, className: iconClassName } = TYPE_STYLES[item.type];
+        const childColor = CHILD_COLORS[item.childName] ?? '#8b5cf6';
+        const isImportant = item.type === 'milestone' || item.type === 'concern';
         return (
-          <li key={item.id} className="relative flex items-start gap-3 py-2">
+          <li key={item.id} className={cn('group relative flex items-start gap-3 py-3', isImportant && 'my-1')}>
             <span
               className={cn(
-                'relative z-10 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border',
+                'relative z-10 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border bg-slate-950 shadow-[0_0_0_4px_rgba(2,6,23,0.85)] transition-transform duration-300 group-hover:scale-105',
                 iconClassName
               )}
             >
               <Icon className="h-4 w-4" aria-hidden="true" />
             </span>
-            <div className="min-w-0 flex-1 space-y-1.5 pt-0.5">
+            <div className={cn('min-w-0 flex-1 space-y-2 rounded-2xl border border-slate-800/70 bg-slate-900/35 px-4 py-3 transition-colors group-hover:border-slate-700/90', isImportant && 'border-violet-400/20 bg-violet-950/10')}>
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="secondary" size="sm">
+                <Badge variant={item.type === 'concern' ? 'destructive' : item.type === 'milestone' ? 'success' : 'secondary'} size="sm" dot>
                   {ACTIVITY_TYPE_LABELS[item.type]}
                 </Badge>
-                <span className="text-[11px] font-medium text-slate-500">{item.childName}</span>
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-300">
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: childColor, boxShadow: `0 0 8px ${childColor}` }} />
+                  {item.childName}
+                </span>
+                <time className="ml-auto text-[10px] uppercase tracking-[0.12em] text-slate-600">{item.time}</time>
               </div>
               <p className="text-sm font-semibold text-slate-100">{item.title}</p>
-              <p className="text-xs text-slate-400">{item.description}</p>
-              <time className="block text-[11px] uppercase tracking-[0.18em] text-slate-600">
-                {item.time}
-              </time>
+              <p className="text-xs leading-relaxed text-slate-400">{item.description}</p>
             </div>
           </li>
         );

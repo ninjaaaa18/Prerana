@@ -6,6 +6,7 @@ import {
   Milestone,
   PartyPopper,
   Radar,
+  ScanLine,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Container } from '@/components/ui/container';
@@ -57,28 +58,35 @@ export const ParentActivityPage: React.FC = () => {
 
       <Reveal y={16}>
         <section
-          aria-label="Activity and insights"
-          className="relative overflow-hidden rounded-[28px] border border-violet-500/20 bg-slate-950/70 px-6 py-7 shadow-[0_20px_60px_rgba(15,23,42,0.7)] sm:px-8"
+          aria-label="Family activity log"
+          className="relative overflow-hidden rounded-[28px] border border-cyan-400/20 bg-[radial-gradient(circle_at_88%_18%,rgba(56,189,248,0.12),transparent_28%),linear-gradient(135deg,rgba(15,23,42,0.96),rgba(16,10,38,0.9))] px-6 py-7 shadow-[0_20px_60px_rgba(15,23,42,0.7)] sm:px-8"
         >
-          <GalaxyGlow color="violet" x="84%" y="-20%" size={300} opacity={0.14} />
-          <GalaxyGlow color="pink" x="20%" y="95%" size={240} opacity={0.1} />
+          <GalaxyGlow color="violet" x="84%" y="-20%" size={280} opacity={0.12} />
+          <GalaxyGlow color="pink" x="18%" y="105%" size={220} opacity={0.08} />
+          <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] [background-size:32px_32px]" />
           <div className="relative flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div className="space-y-2">
-              <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-violet-300">
+              <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-cyan-300">
                 <Radar className="h-3.5 w-3.5" aria-hidden="true" />
-                Mission control
+                Family activity log
               </p>
               <h1 className="font-display text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">
-                Family activity
+                Mission Timeline
               </h1>
+              <p className="max-w-xl text-sm leading-relaxed text-slate-400">
+                Track learning moments, milestones, assessments, and important signals across your family.
+              </p>
             </div>
-            <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 px-3 py-2 text-sm text-slate-300">
-              {activities.length} activity item{activities.length === 1 ? '' : 's'}
+            <div className="flex shrink-0 items-center gap-3 rounded-2xl border border-cyan-400/15 bg-slate-950/55 px-4 py-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-300">
+                <ScanLine className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <div>
+                <p className="font-display text-xl font-extrabold leading-none text-slate-100">{activities.length}</p>
+                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Signals tracked</p>
+              </div>
             </div>
           </div>
-          <p className="relative mt-4 max-w-xl text-sm text-slate-400">
-            A chronological view of milestones, assessments, learning moments and concerns.
-          </p>
         </section>
       </Reveal>
 
@@ -106,12 +114,22 @@ export const ParentActivityPage: React.FC = () => {
         })}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Dropdown label="Child" options={CHILD_FILTERS()} value={childId} onChange={setChildId} />
-        <Dropdown label="Activity type" options={TYPE_FILTERS} value={type} onChange={setType} />
-      </div>
+      <section
+        aria-label="Activity scanner"
+        className="relative overflow-visible rounded-2xl border border-violet-400/15 bg-slate-950/60 p-4 shadow-[0_14px_40px_rgba(15,23,42,0.35)] sm:p-5"
+      >
+        <div className="mb-4 flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(103,232,249,0.9)]" />
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.24em] text-violet-200">Activity scanner</h2>
+          <span className="ml-auto text-[10px] uppercase tracking-[0.16em] text-slate-600">Telemetry filters</span>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Dropdown label="Child" options={CHILD_FILTERS()} value={childId} onChange={setChildId} />
+          <Dropdown label="Activity type" options={TYPE_FILTERS} value={type} onChange={setType} />
+        </div>
+      </section>
 
-      <Card className="border border-slate-800/80 bg-slate-950/50 p-5">
+      <Card className="border border-slate-800/80 bg-slate-950/50 p-4 shadow-[0_18px_50px_rgba(2,6,23,0.35)] sm:p-6">
         <ActivityFeed activities={activities} />
       </Card>
     </Container>
