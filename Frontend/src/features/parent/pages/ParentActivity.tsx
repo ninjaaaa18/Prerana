@@ -16,7 +16,7 @@ import { GalaxyGlow } from '@/components/theme/GalaxyGlow';
 import { Reveal } from '@/components/landing/Reveal';
 import { ParentNav } from '../components/ParentNav';
 import { ActivityFeed } from '../components/ActivityFeed';
-import { filterActivities, getActivityCounts, getChildren } from '../data';
+import { filterActivities, getChildren } from '../data';
 import { ACTIVITY_TYPE_LABELS } from '../utils';
 import type { ParentActivityType } from '../types';
 
@@ -50,7 +50,13 @@ export const ParentActivityPage: React.FC = () => {
     type: type === 'all' ? undefined : (type as ParentActivityType),
   });
 
-  const counts = getActivityCounts();
+  const counts = activities.reduce<Record<ParentActivityType, number>>(
+    (activityCounts, activity) => {
+      activityCounts[activity.type] += 1;
+      return activityCounts;
+    },
+    { milestone: 0, assessment: 0, learning: 0, concern: 0, achievement: 0 }
+  );
 
   return (
     <Container size="xl" className="space-y-8">

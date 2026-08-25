@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Activity, AlertTriangle, ArrowUpRight, CalendarCheck2, Clock3, Flame, Gauge, Sparkles, TrendingUp } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Container } from '@/components/ui/container';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -66,8 +67,8 @@ export const ParentDashboard: React.FC = () => {
                   return (
                     <React.Fragment key={child.id}>
                       <div className="absolute left-[50%] top-[50%] hidden h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border border-violet-400/10 bg-violet-500/5 blur-2xl sm:block" aria-hidden="true" />
-                      <a
-                        href={`/app/parent/children/${child.id}`}
+                      <Link
+                        to={`/app/parent/children/${child.id}`}
                         onClick={() => setSelectedChildId(child.id)}
                         className={[
                           'group relative flex min-h-[180px] flex-col items-center justify-between rounded-[24px] border p-3 text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
@@ -116,7 +117,7 @@ export const ParentDashboard: React.FC = () => {
                             <span>{status.label}</span>
                           </div>
                         </div>
-                      </a>
+                      </Link>
                     </React.Fragment>
                   );
                 })}
@@ -227,20 +228,14 @@ export const ParentDashboard: React.FC = () => {
                     </span>
                   </div>
 
-                  <a
-                    href={`/app/parent/children/${recommendation.childId}`}
-                    className="block"
+                  <Link
+                    to={`/app/parent/children/${recommendation.childId}`}
+                    className={buttonVariants({ variant: 'outline', size: 'sm', className: 'w-full justify-between' })}
                     onClick={() => setSelectedChildId(recommendation.childId)}
                   >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full justify-between"
-                      rightIcon={<ArrowUpRight className="h-4 w-4" aria-hidden="true" />}
-                    >
-                      Open {recommendation.childName}&apos;s detail
-                    </Button>
-                  </a>
+                    Open {recommendation.childName}&apos;s detail
+                    <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                  </Link>
                 </div>
               </div>
             ) : (

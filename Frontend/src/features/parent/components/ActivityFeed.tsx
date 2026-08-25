@@ -43,8 +43,13 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities, classNam
   }
 
   return (
-    <ol aria-label="Family mission timeline" className={cn('relative space-y-1', className)}>
-      <div className="absolute bottom-7 left-[21px] top-7 w-px bg-gradient-to-b from-cyan-300/60 via-violet-500/30 to-slate-700" aria-hidden="true" />
+    <ol
+      aria-label="Family mission timeline"
+      className={cn(
+        'relative space-y-1 before:absolute before:bottom-7 before:left-[21px] before:top-7 before:w-px before:bg-gradient-to-b before:from-cyan-300/60 before:via-violet-500/30 before:to-slate-700 before:content-[""]',
+        className
+      )}
+    >
       {activities.map((item) => {
         const { icon: Icon, className: iconClassName } = TYPE_STYLES[item.type];
         const childColor = CHILD_COLORS[item.childName] ?? '#8b5cf6';
