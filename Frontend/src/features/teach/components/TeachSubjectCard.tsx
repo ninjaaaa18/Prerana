@@ -4,16 +4,24 @@ import { ArrowRight, BookOpen, Layers, Settings2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { getSubjectTotals } from '../data';
+import { getSubjectTotals as getDefaultSubjectTotals } from '../data';
 import type { TeacherSubject } from '../types';
+
+export interface TeachSubjectTotals {
+  chapters: number;
+  lessons: number;
+  published: number;
+  drafts: number;
+}
 
 export interface TeachSubjectCardProps {
   subject: TeacherSubject;
+  totals?: TeachSubjectTotals;
   className?: string;
 }
 
-export const TeachSubjectCard: React.FC<TeachSubjectCardProps> = ({ subject, className }) => {
-  const totals = getSubjectTotals(subject.id);
+export const TeachSubjectCard: React.FC<TeachSubjectCardProps> = ({ subject, totals: totalsProp, className }) => {
+  const totals = totalsProp ?? getDefaultSubjectTotals(subject.id);
   const { title, description, color, grade, lastUpdated } = subject;
 
   return (

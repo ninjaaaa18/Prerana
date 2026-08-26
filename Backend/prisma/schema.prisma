@@ -26,6 +26,7 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   sessions     Session[]
+  subjects     Subject[]
 
   @@map("users")
 }
@@ -41,4 +42,72 @@ model Session {
 
   @@index([userId])
   @@map("sessions")
+}
+
+enum ContentStatus {
+  draft
+  review
+  published
+  archived
+}
+
+model Subject {
+  id          String        @id @default(uuid())
+  title       String
+  description String        @default("")
+  color       String        @default("#6366f1")
+  grade       String        @default("")
+  order       Int           @default(0)
+  status      ContentStatus @default(draft)
+  authorId    String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  chapters Chapter[]
+
+  @@index([authorId])
+  @@index([status])
+  @@map("subjects")
+}
+
+model Chapter {
+  id          String        @id @default(uuid())
+  subjectId   String
+  title       String
+  description String        @default("")
+  order       Int           @default(0)
+  status      ContentStatus @default(draft)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  subject Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+
+  @@index([subjectId])
+  @@index([status])
+  @@map("chapters")
+}
+
+model Lesson {
+  id                String        @id @default(uuid())
+  chapterId         String
+  title             String
+  order             Int           @default(0)
+  type              String        @default("concept")
+  difficulty        String        @default("beginner")
+  estimatedMinutes  Int           @default(10)
+  learningObjective String        @default("")
+  blocks            Json          @default("[]")
+  tags              String        @default("")
+  status            ContentStatus @default(draft)
+  version           Int           @default(1)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@index([chapterId])
+  @@index([status])
+  @@map("lessons")
 }

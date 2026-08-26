@@ -2,9 +2,12 @@ import React, { useMemo, useState } from 'react';
 import { SearchX } from 'lucide-react';
 import { Reveal } from '@/components/landing/Reveal';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AlertCircle } from 'lucide-react';
 import { FilterBar } from '../components/FilterBar';
 import { SubjectGrid } from '../components/SubjectGrid';
-import { SUBJECTS, getSubjectTotals } from '../data';
+import { useSubjects } from '../hooks/use-content';
+import { adaptApiSubject } from '../adapters';
 
 const DIFFICULTY_OPTIONS = [
   { value: 'all', label: 'All levels' },
@@ -29,6 +32,7 @@ const CATEGORY_OPTIONS = [
 ];
 
 export const SubjectsPage: React.FC = () => {
+  const { data: apiSubjects, isLoading, error } = useSubjects();
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
     difficulty: 'all',
@@ -36,9 +40,14 @@ export const SubjectsPage: React.FC = () => {
     category: 'all',
   });
 
+  const subjects = useMemo(
+    () => (apiSubjects ?? []).map((s) => adaptApiSubject(s)),
+    [apiSubjects]
+  );
+
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
-    return SUBJECTS.filter((subject) => {
+    return subjects.filter((subject) => {
       const matchesSearch =
         query.length === 0 || subject.name.toLowerCase().includes(query);
       const matchesDifficulty =
@@ -46,13 +55,37 @@ export const SubjectsPage: React.FC = () => {
       const matchesCategory =
         filters.category === 'all' || subject.category === filters.category;
 
-      const progress = getSubjectTotals(subject).progress;
-      const progressState = progress >= 100 ? 'completed' : progress > 0 ? 'in-progress' : 'not-started';
-      const matchesProgress = filters.progress === 'all' || progressState === filters.progress;
-
-      return matchesSearch && matchesDifficulty && matchesCategory && matchesProgress;
+      return matchesSearch && matchesDifficulty && matchesCategory;
     });
-  }, [search, filters]);
+  }, [subjects, search, filters]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        <Reveal y={16}>
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-96" />
+          </div>
+        </Reveal>
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-64 rounded-2xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <EmptyState
+        icon={<AlertCircle className="h-8 w-8" />}
+        title="Failed to load subjects"
+        description="Something went wrong while fetching subjects. Please try again."
+      />
+    );
+  }
 
   return (
     <div className="space-y-8">

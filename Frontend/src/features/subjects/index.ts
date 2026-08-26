@@ -12,4 +12,8 @@ export * from './components/SectionTitle';
 export * from './pages/SubjectsPage';
 export * from './pages/SubjectDetailPage';
 export * from './pages/ChapterDetailPage';
+export * from './hooks/use-content';
+export * from './services/content.service';
+export * from './adapters';
+export * from './content-types';
 export type * from './types';

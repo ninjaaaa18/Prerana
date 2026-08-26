@@ -10,18 +10,14 @@ import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
 import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/toast';
 import { TeacherNav } from '../components/TeacherNav';
 import { ContentStatusBadge } from '../components/ContentStatusBadge';
 import { LessonEditor } from '../components/LessonEditor';
 import { AITeachingAssistant } from '../components/AITeachingAssistant';
-import {
-  getChapterForLesson,
-  getChaptersForSubject,
-  getLesson,
-  getSubject,
-  SUBJECTS,
-} from '../data';
+import { useLesson, useSubjects, useSubjectChapters, useCreateLesson, useUpdateLesson } from '@/features/subjects/hooks/use-content';
+import { adaptApiSubjectToTeacher } from '../adapters';
 import { DIFFICULTY_LABELS, LESSON_TYPE_LABELS } from '../utils';
 import { cn } from '@/lib/utils';
 import type { Difficulty, LessonBlock, LessonBlockType, LessonType, Visibility } from '../types';
@@ -88,24 +84,87 @@ export const LessonForm: React.FC = () => {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const { lessonId } = useParams<{ lessonId: string }>();
-
   const isEditMode = Boolean(lessonId);
-  const existingLesson = lessonId ? getLesson(lessonId) : undefined;
-  const existingChapter = lessonId ? getChapterForLesson(lessonId) : undefined;
 
-  const [title, setTitle] = React.useState(existingLesson?.title ?? '');
-  const [subjectId, setSubjectId] = React.useState(existingChapter?.subjectId ?? SUBJECTS[0].id);
-  const [chapterId, setChapterId] = React.useState(existingChapter?.id ?? '');
-  const [lessonType, setLessonType] = React.useState<LessonType>(existingLesson?.type ?? 'concept');
-  const [minutes, setMinutes] = React.useState(String(existingLesson?.estimatedMinutes ?? 10));
-  const [objective, setObjective] = React.useState(existingLesson?.learningObjective ?? '');
-  const [blocks, setBlocks] = React.useState<LessonBlock[]>(existingLesson?.blocks ?? []);
-  const [visibility, setVisibility] = React.useState<Visibility>('students');
-  const [difficulty, setDifficulty] = React.useState<Difficulty>(
-    existingLesson?.difficulty ?? 'beginner'
+  const { data: existingLesson, isLoading: lessonLoading } = useLesson(lessonId ?? '');
+  const { data: apiSubjects } = useSubjects();
+
+  const subjects = React.useMemo(
+    () => (apiSubjects ?? []).map(adaptApiSubjectToTeacher),
+    [apiSubjects]
   );
-  const [tags, setTags] = React.useState(existingLesson?.tags.join(', ') ?? '');
+
+  const [selectedSubjectId, setSelectedSubjectId] = React.useState('');
+  const { data: apiChapters } = useSubjectChapters(selectedSubjectId);
+  const chapterOptions = React.useMemo(() => {
+    if (!apiChapters) return [];
+    return apiChapters.map((ch) => ({ label: ch.title, value: ch.id }));
+  }, [apiChapters]);
+
+  const createLesson = useCreateLesson();
+  const updateLesson = useUpdateLesson();
+
+  const [title, setTitle] = React.useState('');
+  const [chapterId, setChapterId] = React.useState('');
+  const [lessonType, setLessonType] = React.useState<LessonType>('concept');
+  const [minutes, setMinutes] = React.useState('10');
+  const [objective, setObjective] = React.useState('');
+  const [blocks, setBlocks] = React.useState<LessonBlock[]>([]);
+  const [visibility, setVisibility] = React.useState<Visibility>('students');
+  const [difficulty, setDifficulty] = React.useState<Difficulty>('beginner');
+  const [tags, setTags] = React.useState('');
   const [previewOpen, setPreviewOpen] = React.useState(false);
+  const [initialized, setInitialized] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isEditMode && existingLesson && !initialized) {
+      setTitle(existingLesson.title);
+      setLessonType((existingLesson.type as LessonType) || 'concept');
+      setMinutes(String(existingLesson.estimatedMinutes));
+      setObjective(existingLesson.learningObjective);
+      setBlocks(
+        (existingLesson.blocks ?? []).map((b) => ({
+          id: b.id || `block-${Math.random().toString(36).slice(2)}`,
+          type: b.type as LessonBlockType,
+          content: b.content,
+          ...(b.label ? { label: b.label } : {}),
+          ...(b.language ? { language: b.language } : {}),
+        }))
+      );
+      setDifficulty((existingLesson.difficulty as Difficulty) || 'beginner');
+      setTags(existingLesson.tags ?? '');
+      setChapterId(existingLesson.chapterId);
+
+      const existingChapter = existingLesson.chapter;
+      if (existingChapter?.subject?.id) {
+        setSelectedSubjectId(existingChapter.subject.id);
+      }
+      setInitialized(true);
+    }
+  }, [isEditMode, existingLesson, initialized]);
+
+  React.useEffect(() => {
+    if (!isEditMode && subjects.length > 0 && !selectedSubjectId) {
+      setSelectedSubjectId(subjects[0].id);
+    }
+  }, [isEditMode, subjects, selectedSubjectId]);
+
+  if (isEditMode && lessonLoading) {
+    return (
+      <Container size="xl" className="space-y-8">
+        <TeacherNav />
+        <Skeleton className="h-10 w-64" />
+        <div className="grid gap-8 xl:grid-cols-3">
+          <div className="space-y-6 xl:col-span-2">
+            <Skeleton className="h-48 rounded-2xl" />
+            <Skeleton className="h-32 rounded-2xl" />
+            <Skeleton className="h-64 rounded-2xl" />
+          </div>
+          <Skeleton className="h-64 rounded-2xl" />
+        </div>
+      </Container>
+    );
+  }
 
   if (isEditMode && !existingLesson) {
     return (
@@ -122,23 +181,59 @@ export const LessonForm: React.FC = () => {
     );
   }
 
-  const chapterOptions = getChaptersForSubject(subjectId);
-  const subject = getSubject(subjectId);
+  const subject = subjects.find((s) => s.id === selectedSubjectId);
   const parsedMinutes = Number(minutes) || 0;
 
-  const showSaved = () =>
-    showToast({
-      title: isEditMode ? 'Draft updated' : 'Draft saved',
-      description: 'Your changes are stored locally in this preview.',
-      variant: 'success',
-    });
+  const handleSaveDraft = async (): Promise<void> => {
+    const data = {
+      title: title || 'Untitled lesson',
+      type: lessonType,
+      difficulty,
+      estimatedMinutes: parsedMinutes,
+      learningObjective: objective,
+      blocks,
+      tags,
+    };
 
-  const showReview = () =>
-    showToast({
-      title: 'Submitted for review',
-      description: 'An admin will review this lesson before it is published.',
-      variant: 'info',
-    });
+    try {
+      if (isEditMode && lessonId) {
+        await updateLesson.mutateAsync({ lessonId, data: { ...data, status: 'draft' } });
+        showToast({ title: 'Draft updated', description: 'Your changes have been saved.', variant: 'success' });
+      } else if (chapterId) {
+        await createLesson.mutateAsync({ chapterId, data });
+        showToast({ title: 'Draft saved', description: 'Your new lesson has been created.', variant: 'success' });
+        navigate('/app/teach/subjects');
+      }
+    } catch {
+      showToast({ title: 'Error', description: 'Failed to save. Please try again.', variant: 'error' });
+    }
+  };
+
+  const handleSubmitForReview = async (): Promise<void> => {
+    const data = {
+      title: title || 'Untitled lesson',
+      type: lessonType,
+      difficulty,
+      estimatedMinutes: parsedMinutes,
+      learningObjective: objective,
+      blocks,
+      tags,
+      status: 'review' as const,
+    };
+
+    try {
+      if (isEditMode && lessonId) {
+        await updateLesson.mutateAsync({ lessonId, data });
+        showToast({ title: 'Submitted for review', description: 'An admin will review this lesson before it is published.', variant: 'info' });
+      } else if (chapterId) {
+        await createLesson.mutateAsync({ chapterId, data });
+        showToast({ title: 'Lesson created', description: 'Submitted for review.', variant: 'info' });
+        navigate('/app/teach/subjects');
+      }
+    } catch {
+      showToast({ title: 'Error', description: 'Failed to submit. Please try again.', variant: 'error' });
+    }
+  };
 
   return (
     <Container size="xl" className="space-y-8">
@@ -161,14 +256,13 @@ export const LessonForm: React.FC = () => {
               <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
                 <ContentStatusBadge status={existingLesson.status} size="sm" />
                 <span>Version {existingLesson.version}</span>
-                <span>Updated {existingLesson.lastUpdated}</span>
               </div>
             )}
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Button variant="outline" leftIcon={<Save className="h-4 w-4" aria-hidden="true" />} onClick={showSaved}>
+          <Button variant="outline" leftIcon={<Save className="h-4 w-4" aria-hidden="true" />} onClick={() => void handleSaveDraft()}>
             Save Draft
           </Button>
           <Button variant="outline" leftIcon={<Eye className="h-4 w-4" aria-hidden="true" />} onClick={() => setPreviewOpen(true)}>
@@ -192,16 +286,16 @@ export const LessonForm: React.FC = () => {
             <div className="grid gap-4 sm:grid-cols-2">
               <Dropdown
                 label="Subject"
-                options={SUBJECTS.map((s) => ({ label: s.title, value: s.id }))}
-                value={subjectId}
+                options={subjects.map((s) => ({ label: s.title, value: s.id }))}
+                value={selectedSubjectId}
                 onChange={(value) => {
-                  setSubjectId(value);
-                  setChapterId(getChaptersForSubject(value)[0]?.id ?? '');
+                  setSelectedSubjectId(value);
+                  setChapterId('');
                 }}
               />
               <Dropdown
                 label="Chapter"
-                options={chapterOptions.map((c) => ({ label: c.title, value: c.id }))}
+                options={chapterOptions}
                 value={chapterId}
                 onChange={setChapterId}
                 placeholder="Select a chapter"
@@ -306,13 +400,13 @@ export const LessonForm: React.FC = () => {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <Button variant="outline" leftIcon={<Save className="h-4 w-4" aria-hidden="true" />} onClick={showSaved}>
+            <Button variant="outline" leftIcon={<Save className="h-4 w-4" aria-hidden="true" />} onClick={() => void handleSaveDraft()}>
               Save Draft
             </Button>
             <Button variant="outline" leftIcon={<Eye className="h-4 w-4" aria-hidden="true" />} onClick={() => setPreviewOpen(true)}>
               Preview
             </Button>
-            <Button variant="primary" leftIcon={<Send className="h-4 w-4" aria-hidden="true" />} onClick={showReview}>
+            <Button variant="primary" leftIcon={<Send className="h-4 w-4" aria-hidden="true" />} onClick={() => void handleSubmitForReview()}>
               Submit for Review
             </Button>
           </div>

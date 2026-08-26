@@ -7,10 +7,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/toast';
 import { TeacherNav } from '../components/TeacherNav';
 import { ContentStatusBadge } from '../components/ContentStatusBadge';
-import { getChaptersForSubject, getSubject, getSubjectTotals } from '../data';
+import { useSubject, useSubjectChapters } from '@/features/subjects/hooks/use-content';
+import { adaptApiSubjectToTeacher, adaptApiChapterToTeacher, getSubjectTotalsFromChapters } from '../adapters';
 import { LESSON_TYPE_LABELS } from '../utils';
 import { cn } from '@/lib/utils';
 
@@ -19,7 +21,28 @@ export const TeachSubjectDetail: React.FC = () => {
   const navigate = useNavigate();
   const { subjectId = '' } = useParams<{ subjectId: string }>();
 
-  const subject = getSubject(subjectId);
+  const { data: apiSubject, isLoading: subjectLoading } = useSubject(subjectId);
+  const { data: apiChapters, isLoading: chaptersLoading } = useSubjectChapters(subjectId);
+
+  const subject = apiSubject ? adaptApiSubjectToTeacher(apiSubject) : undefined;
+  const chapters = (apiChapters ?? []).map(adaptApiChapterToTeacher);
+  const totals = apiChapters ? getSubjectTotalsFromChapters(apiChapters) : { chapters: 0, lessons: 0, published: 0, drafts: 0 };
+  const overallProgress = totals.lessons === 0 ? 0 : Math.round((totals.published / totals.lessons) * 100);
+  const isLoading = subjectLoading || chaptersLoading;
+
+  if (isLoading) {
+    return (
+      <Container size="xl" className="space-y-8">
+        <TeacherNav />
+        <Skeleton className="h-64 rounded-3xl" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-24 rounded-2xl" />
+          ))}
+        </div>
+      </Container>
+    );
+  }
 
   if (!subject) {
     return (
@@ -37,10 +60,6 @@ export const TeachSubjectDetail: React.FC = () => {
       </Container>
     );
   }
-
-  const chapters = getChaptersForSubject(subject.id);
-  const totals = getSubjectTotals(subject.id);
-  const overallProgress = totals.lessons === 0 ? 0 : Math.round((totals.published / totals.lessons) * 100);
 
   return (
     <Container size="xl" className="space-y-8">
@@ -196,7 +215,7 @@ export const TeachSubjectDetail: React.FC = () => {
                         <div className="min-w-0 flex-1 space-y-0.5">
                           <p className="truncate text-sm font-semibold text-slate-100">{lesson.title}</p>
                           <p className="text-xs text-slate-500">
-                            {LESSON_TYPE_LABELS[lesson.type]} · {lesson.estimatedMinutes} min · v{lesson.version} ·{' '}
+                            {LESSON_TYPE_LABELS[lesson.type as keyof typeof LESSON_TYPE_LABELS] ?? lesson.type} · {lesson.estimatedMinutes} min · v{lesson.version} ·{' '}
                             {lesson.lastUpdated}
                           </p>
                         </div>

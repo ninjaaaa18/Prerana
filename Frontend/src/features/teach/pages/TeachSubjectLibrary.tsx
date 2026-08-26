@@ -1,17 +1,22 @@
 import React from 'react';
+import { useQueries } from '@tanstack/react-query';
 import { Plus, Rocket } from 'lucide-react';
 import { Container } from '@/components/ui/container';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Skeleton } from '@/components/ui/skeleton';
 import { GalaxyGlow } from '@/components/theme/GalaxyGlow';
 import { Reveal } from '@/components/landing/Reveal';
 import { useToast } from '@/components/ui/toast';
 import { TeacherNav } from '../components/TeacherNav';
 import { FilterTabs } from '../components/FilterTabs';
 import { TeachSubjectCard } from '../components/TeachSubjectCard';
-import { getSubjectTotals, SUBJECTS } from '../data';
+import { useSubjects, useCreateSubject, CONTENT_QUERY_KEYS } from '@/features/subjects/hooks/use-content';
+import { adaptApiSubjectToTeacher, getSubjectTotalsFromChapters } from '../adapters';
 import { cn } from '@/lib/utils';
+import type { TeacherSubject } from '../types';
+import { apiClient } from '@/lib/axios';
 
 type SubjectFilter = 'all' | 'mine' | 'published' | 'drafts';
 
@@ -22,41 +27,102 @@ const FILTERS: { id: SubjectFilter; label: string }[] = [
   { id: 'drafts', label: 'Drafts' },
 ];
 
+interface SubjectWithTotals extends TeacherSubject {
+  totals: { chapters: number; lessons: number; published: number; drafts: number };
+}
+
 export const TeachSubjectLibrary: React.FC = () => {
   const { showToast } = useToast();
   const [query, setQuery] = React.useState('');
   const [filter, setFilter] = React.useState<SubjectFilter>('all');
+  const [newTitle, setNewTitle] = React.useState('');
+  const [showCreate, setShowCreate] = React.useState(false);
+  const createSubject = useCreateSubject();
+
+  const { data: apiSubjects, isLoading } = useSubjects();
+
+  const subjectIds = React.useMemo(
+    () => (apiSubjects ?? []).map((s) => s.id),
+    [apiSubjects]
+  );
+
+  const chapterQueries = useQueries({
+    queries: subjectIds.map((id) => ({
+      queryKey: [...CONTENT_QUERY_KEYS.subjectChapters(id)] as unknown[],
+      queryFn: async () => {
+        const res = await apiClient.get<{ data: Array<{ id: string; status: string; lessons?: Array<{ status: string }> }> }>(`/subjects/${id}/chapters`);
+        return res.data.data;
+      },
+      enabled: Boolean(id),
+    })),
+  });
+
+  const subjectsWithTotals: SubjectWithTotals[] = React.useMemo(() => {
+    if (!apiSubjects) return [];
+    return apiSubjects.map((s, i) => {
+      const chapters = (chapterQueries[i]?.data ?? []) as Array<{ id: string; status: string; lessons?: Array<{ status: string }> }>;
+      return {
+        ...adaptApiSubjectToTeacher(s),
+        totals: getSubjectTotalsFromChapters(chapters),
+      };
+    });
+  }, [apiSubjects, chapterQueries]);
 
   const filtered = React.useMemo(() => {
-    return SUBJECTS.filter((subject) => {
+    return subjectsWithTotals.filter((subject) => {
       const matchesQuery =
         query.trim() === '' ||
         `${subject.title} ${subject.description}`.toLowerCase().includes(query.trim().toLowerCase());
 
       if (!matchesQuery) return false;
 
-      const totals = getSubjectTotals(subject.id);
       switch (filter) {
         case 'published':
-          return totals.published > 0;
+          return subject.totals.published > 0;
         case 'drafts':
-          return totals.drafts > 0;
+          return subject.totals.drafts > 0;
         case 'mine':
         default:
           return true;
       }
     });
-  }, [query, filter]);
+  }, [subjectsWithTotals, query, filter]);
 
   const counts = React.useMemo(
     () => ({
-      all: SUBJECTS.length,
-      mine: SUBJECTS.length,
-      published: SUBJECTS.filter((s) => getSubjectTotals(s.id).published > 0).length,
-      drafts: SUBJECTS.filter((s) => getSubjectTotals(s.id).drafts > 0).length,
+      all: subjectsWithTotals.length,
+      mine: subjectsWithTotals.length,
+      published: subjectsWithTotals.filter((s) => s.totals.published > 0).length,
+      drafts: subjectsWithTotals.filter((s) => s.totals.drafts > 0).length,
     }),
-    []
+    [subjectsWithTotals]
   );
+
+  const handleCreate = async (): Promise<void> => {
+    if (!newTitle.trim()) return;
+    try {
+      await createSubject.mutateAsync({ title: newTitle.trim() });
+      setNewTitle('');
+      setShowCreate(false);
+      showToast({ title: 'Subject created', description: 'Your new subject has been created.', variant: 'success' });
+    } catch {
+      showToast({ title: 'Error', description: 'Failed to create subject.', variant: 'error' });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Container size="xl" className="space-y-8">
+        <TeacherNav />
+        <Skeleton className="h-40 rounded-3xl" />
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-60 rounded-2xl" />
+          ))}
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container size="xl" className="space-y-8">
@@ -86,19 +152,32 @@ export const TeachSubjectLibrary: React.FC = () => {
             <Button
               size="lg"
               leftIcon={<Plus className="h-5 w-5" aria-hidden="true" />}
-              onClick={() =>
-                showToast({
-                  title: 'Create Subject',
-                  description: 'Subject creation is simulated in this preview.',
-                  variant: 'info',
-                })
-              }
+              onClick={() => setShowCreate(!showCreate)}
             >
               Create Subject
             </Button>
           </div>
         </section>
       </Reveal>
+
+      {showCreate && (
+        <div className="flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+          <Input
+            placeholder="Subject title..."
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') void handleCreate(); }}
+            className="flex-1"
+            aria-label="New subject title"
+          />
+          <Button onClick={() => void handleCreate()} disabled={!newTitle.trim() || createSubject.isPending}>
+            {createSubject.isPending ? 'Creating...' : 'Create'}
+          </Button>
+          <Button variant="ghost" onClick={() => { setShowCreate(false); setNewTitle(''); }}>
+            Cancel
+          </Button>
+        </div>
+      )}
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <FilterTabs
@@ -120,17 +199,11 @@ export const TeachSubjectLibrary: React.FC = () => {
       {filtered.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((subject) => (
-            <TeachSubjectCard key={subject.id} subject={subject} />
+            <TeachSubjectCard key={subject.id} subject={subject} totals={subject.totals} />
           ))}
           <button
             type="button"
-            onClick={() =>
-              showToast({
-                title: 'Create Subject',
-                description: 'Subject creation is simulated in this preview.',
-                variant: 'info',
-              })
-            }
+            onClick={() => setShowCreate(true)}
             className={cn(
               'flex min-h-[240px] flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-slate-700 bg-slate-900/30 text-slate-400 transition-colors hover:border-slate-600 hover:bg-slate-900/60 hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500'
             )}

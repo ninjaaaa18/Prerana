@@ -1,5 +1,6 @@
 export * from './data';
 export * from './navigation';
+export * from './adapters';
 export type {
   AttentionItem,
   ChapterPerformance,

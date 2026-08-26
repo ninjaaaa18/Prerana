@@ -3,13 +3,15 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, SearchX } from 'lucide-react';
 import { Reveal } from '@/components/landing/Reveal';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Skeleton } from '@/components/ui/skeleton';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { SubjectHero } from '../components/SubjectHero';
 import { SectionTitle } from '../components/SectionTitle';
 import { FilterBar } from '../components/FilterBar';
 import { ChapterGrid } from '../components/ChapterGrid';
-import { SUBJECTS, getChapterProgress, getChapterStatus } from '../data';
+import { useSubject, useSubjectChapters } from '../hooks/use-content';
+import { adaptApiSubject, adaptApiChapter } from '../adapters';
 
 const DIFFICULTY_OPTIONS = [
   { value: 'all', label: 'All levels' },
@@ -27,7 +29,8 @@ const PROGRESS_OPTIONS = [
 
 export const SubjectDetailPage: React.FC = () => {
   const { subjectId } = useParams<{ subjectId: string }>();
-  const subject = SUBJECTS.find((item) => item.id === subjectId);
+  const { data: apiSubject, isLoading: subjectLoading, error: subjectError } = useSubject(subjectId ?? '');
+  const { data: apiChapters, isLoading: chaptersLoading } = useSubjectChapters(subjectId ?? '');
 
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
@@ -35,28 +38,42 @@ export const SubjectDetailPage: React.FC = () => {
     progress: 'all',
   });
 
+  const subject = useMemo(
+    () => (apiSubject ? adaptApiSubject(apiSubject, apiChapters) : undefined),
+    [apiSubject, apiChapters]
+  );
+
   const chapters = useMemo(() => {
-    if (!subject) return [];
+    if (!apiChapters) return [];
+    const adapted = apiChapters.map(adaptApiChapter);
     const query = search.trim().toLowerCase();
-    return subject.chapters.filter((chapter) => {
+    return adapted.filter((chapter) => {
       const matchesSearch =
         query.length === 0 || chapter.title.toLowerCase().includes(query);
       const matchesDifficulty =
         filters.difficulty === 'all' || chapter.difficulty === filters.difficulty;
-
-      const progress = getChapterProgress(chapter);
-      const progressState = getChapterStatus(chapter);
-      const matchesProgress =
-        filters.progress === 'all' ||
-        (filters.progress === 'in-progress' && progressState === 'in-progress') ||
-        (filters.progress === 'completed' && progressState === 'completed') ||
-        (filters.progress === 'not-started' && progress === 0);
-
-      return matchesSearch && matchesDifficulty && matchesProgress;
+      return matchesSearch && matchesDifficulty;
     });
-  }, [subject, search, filters]);
+  }, [apiChapters, search, filters]);
 
-  if (!subject) {
+  const isLoading = subjectLoading || chaptersLoading;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        <Skeleton className="h-48 rounded-3xl" />
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-32" />
+          <div className="grid gap-4 md:grid-cols-2">
+            <Skeleton className="h-48 rounded-2xl" />
+            <Skeleton className="h-48 rounded-2xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (subjectError || !subject) {
     return (
       <EmptyState
         icon={<SearchX className="h-8 w-8" />}
@@ -76,7 +93,7 @@ export const SubjectDetailPage: React.FC = () => {
       <div className="space-y-4">
         <SectionTitle
           title="Chapters"
-          subtitle={`${subject.chapters.length} chapters to explore`}
+          subtitle={`${chapters.length} chapters to explore`}
           action={
             <Link
               to="/app/subjects"
