@@ -13,9 +13,13 @@ import { AuthDivider } from '../components/AuthDivider';
 import { AuthFooter } from '../components/AuthFooter';
 import { PasswordField } from '../components/PasswordField';
 import { SocialLoginButton } from '../components/SocialLoginButton';
+import { getAuthErrorMessage } from '@/context/auth-context';
+import { useAuth } from '@/hooks/use-auth';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -25,10 +29,14 @@ export const LoginPage: React.FC = () => {
     defaultValues: { email: '', password: '', remember: false },
   });
 
-  const onSubmit = async () => {
-    // TODO: wire to auth service when the API is available
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    navigate('/app');
+  const onSubmit = async (values: LoginValues) => {
+    setSubmitError(null);
+    try {
+      const user = await login(values.email, values.password);
+      navigate(user.role === 'parent' ? '/app/parent' : '/app');
+    } catch (error) {
+      setSubmitError(getAuthErrorMessage(error));
+    }
   };
 
   return (
@@ -39,6 +47,11 @@ export const LoginPage: React.FC = () => {
           title="Welcome back"
           subtitle="Sign in to continue your learning journey"
         />
+        {submitError && (
+          <p role="alert" className="mt-5 rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
+            {submitError}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5" noValidate>
           <Input

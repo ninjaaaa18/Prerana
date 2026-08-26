@@ -1,7 +1,7 @@
 import React from 'react';
 import { GraduationCap, HeartHandshake, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { UserRole, UserRoleOption } from '../types';
+import type { UserRoleOption } from '../types';
 
 const ROLE_OPTIONS: UserRoleOption[] = [
   { value: 'student', label: 'Student', description: 'I want to learn' },
@@ -9,15 +9,15 @@ const ROLE_OPTIONS: UserRoleOption[] = [
   { value: 'parent', label: 'Parent', description: 'I guide my child' },
 ];
 
-const ROLE_ICONS: Record<UserRole, React.ReactNode> = {
+const ROLE_ICONS: Record<UserRoleOption['value'], React.ReactNode> = {
   student: <GraduationCap className="h-5 w-5" />,
   teacher: <Users className="h-5 w-5" />,
   parent: <HeartHandshake className="h-5 w-5" />,
 };
 
 export interface RoleSelectorProps {
-  value?: UserRole;
-  onChange?: (role: UserRole) => void;
+  value?: UserRoleOption['value'];
+  onChange?: (role: UserRoleOption['value']) => void;
   error?: string;
   className?: string;
 }

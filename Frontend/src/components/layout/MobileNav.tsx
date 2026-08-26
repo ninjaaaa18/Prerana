@@ -3,14 +3,16 @@ import { NavLink } from 'react-router-dom';
 import { MoreHorizontal } from 'lucide-react';
 import { Icon } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
-import { MOBILE_NAV_ITEMS } from '@/config/navigation';
+import { MOBILE_NAV_ITEMS, filterSectionsForRole, type Role } from '@/config/navigation';
 
 export interface MobileNavProps {
   onOpenMore: () => void;
+  role?: Role;
   className?: string;
 }
 
-export const MobileNav: React.FC<MobileNavProps> = ({ onOpenMore, className }) => {
+export const MobileNav: React.FC<MobileNavProps> = ({ onOpenMore, role, className }) => {
+  const visibleItems = filterSectionsForRole([{ label: 'Mobile', items: MOBILE_NAV_ITEMS }], role)[0]?.items ?? [];
   return (
     <nav
       aria-label="Primary"
@@ -21,7 +23,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ onOpenMore, className }) =
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="grid grid-cols-5">
-        {MOBILE_NAV_ITEMS.map((item) => (
+        {visibleItems.map((item) => (
           <NavLink
             key={item.route}
             to={item.route}

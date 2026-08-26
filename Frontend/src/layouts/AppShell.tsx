@@ -9,8 +9,10 @@ import { BackgroundLayer } from '@/components/theme/BackgroundLayer';
 import { Spinner } from '@/components/ui/spinner';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { MEDIA_QUERIES, SIDEBAR_WIDTH } from '@/constants/breakpoints';
+import { useAuth } from '@/hooks/use-auth';
 
 export const AppShell: React.FC = () => {
+  const { role } = useAuth();
   const isDesktop = useMediaQuery(MEDIA_QUERIES.desktop);
   const isTabletUp = useMediaQuery(MEDIA_QUERIES.tabletUp);
   const [collapsed, setCollapsed] = React.useState(false);
@@ -34,7 +36,7 @@ export const AppShell: React.FC = () => {
     <div className="relative min-h-screen overflow-x-clip bg-slate-950 text-slate-100">
       <BackgroundLayer />
 
-      <Sidebar collapsed={isDesktop ? collapsed : true} />
+      <Sidebar collapsed={isDesktop ? collapsed : true} role={role ?? undefined} />
 
       <div
         className="relative z-10 flex min-h-screen flex-col transition-[padding-left] duration-200 ease-in-out"
@@ -56,8 +58,8 @@ export const AppShell: React.FC = () => {
         </main>
       </div>
 
-      <NavigationDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
-      <MobileNav onOpenMore={() => setDrawerOpen(true)} />
+      <NavigationDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} role={role ?? undefined} />
+      <MobileNav onOpenMore={() => setDrawerOpen(true)} role={role ?? undefined} />
     </div>
   );
 };

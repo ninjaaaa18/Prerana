@@ -6,18 +6,20 @@ import { Logo } from './Logo';
 import { SidebarItem } from './SidebarItem';
 import { SidebarGroup } from './SidebarGroup';
 import { SidebarFooter } from './SidebarFooter';
-import { MANAGE_NAV_SECTIONS, PRIMARY_NAV_SECTIONS } from '@/config/navigation';
+import { MANAGE_NAV_SECTIONS, PRIMARY_NAV_SECTIONS, filterSectionsForRole, type Role } from '@/config/navigation';
 import { useScrollLock } from '@/hooks/use-scroll-lock';
 
 export interface NavigationDrawerProps {
   open: boolean;
   onClose: () => void;
+  role?: Role;
   className?: string;
 }
 
 export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
   open,
   onClose,
+  role,
   className,
 }) => {
   const drawerRef = React.useRef<HTMLDivElement>(null);
@@ -25,8 +27,8 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
   useScrollLock(open);
 
   const sections = React.useMemo(
-    () => [...PRIMARY_NAV_SECTIONS, ...MANAGE_NAV_SECTIONS],
-    []
+    () => filterSectionsForRole([...PRIMARY_NAV_SECTIONS, ...MANAGE_NAV_SECTIONS], role),
+    [role]
   );
 
   React.useEffect(() => {

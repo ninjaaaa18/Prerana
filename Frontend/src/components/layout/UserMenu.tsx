@@ -4,6 +4,7 @@ import { ChevronDown, HelpCircle, LogOut, Settings, User } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Avatar } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
 
 export interface UserMenuProps {
   name?: string;
@@ -15,6 +16,7 @@ const menuItemClass =
   'flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm text-slate-300 transition-colors hover:bg-slate-800/70 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60';
 
 export const UserMenu: React.FC<UserMenuProps> = ({ name = 'Guest', email = '', className }) => {
+  const { logout } = useAuth();
   const [isOpen, setIsOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -87,7 +89,15 @@ export const UserMenu: React.FC<UserMenuProps> = ({ name = 'Guest', email = '', 
               Help
             </button>
             <div aria-hidden="true" className="my-1 h-px bg-slate-800" />
-            <button type="button" role="menuitem" className={cn(menuItemClass, 'text-rose-400 hover:text-rose-300')}>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setIsOpen(false);
+                void logout();
+              }}
+              className={cn(menuItemClass, 'text-rose-400 hover:text-rose-300')}
+            >
               <LogOut className="h-4 w-4" />
               Log out
             </button>

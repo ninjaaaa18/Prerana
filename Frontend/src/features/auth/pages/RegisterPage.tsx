@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, UserPlus } from 'lucide-react';
@@ -12,8 +12,13 @@ import { AuthHeader } from '../components/AuthHeader';
 import { AuthFooter } from '../components/AuthFooter';
 import { PasswordField } from '../components/PasswordField';
 import { RoleSelector } from '../components/RoleSelector';
+import { getAuthErrorMessage } from '@/context/auth-context';
+import { useAuth } from '@/hooks/use-auth';
 
 export const RegisterPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { register: registerAccount } = useAuth();
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
   const {
     control,
     register,
@@ -30,9 +35,19 @@ export const RegisterPage: React.FC = () => {
     },
   });
 
-  const onSubmit = async () => {
-    // TODO: wire to auth service when the API is available
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const onSubmit = async (values: RegisterValues) => {
+    setSubmitError(null);
+    try {
+      await registerAccount({
+        name: values.fullName,
+        email: values.email,
+        password: values.password,
+        role: values.role,
+      });
+      navigate(values.role === 'parent' ? '/app/parent' : '/app');
+    } catch (error) {
+      setSubmitError(getAuthErrorMessage(error));
+    }
   };
 
   return (
@@ -43,6 +58,11 @@ export const RegisterPage: React.FC = () => {
           title="Create your account"
           subtitle="Join Prerana and start exploring"
         />
+        {submitError && (
+          <p role="alert" className="mt-5 rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
+            {submitError}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5" noValidate>
           <Input

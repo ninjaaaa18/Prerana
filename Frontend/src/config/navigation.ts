@@ -29,7 +29,7 @@ export const PRIMARY_NAV_SECTIONS: NavSection[] = [
         label: 'Assessments',
         route: '/app/assessments',
         icon: 'ClipboardCheck',
-        roles: ['student', 'admin'],
+        roles: ['student', 'teacher', 'parent', 'admin'],
       },
       { label: 'Progress', route: '/app/progress', icon: 'BarChart3' },
     ],

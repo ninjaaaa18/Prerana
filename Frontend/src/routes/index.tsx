@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import { PublicLayout } from '@/layouts/PublicLayout';
 import { AppShell } from '@/layouts/AppShell';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
+import { ForbiddenPage } from '@/pages/ForbiddenPage';
+import { GuestOnly, RequireAuth, RequireRole } from './guards';
 
 const HomePage = lazy(() => import('@/pages/HomePage').then((m) => ({ default: m.HomePage })));
 const DashboardPage = lazy(() =>
@@ -132,16 +134,19 @@ export const AppRoutes: React.FC = () => {
     <Routes>
       <Route element={<PublicLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
-        <Route path="forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="reset-password" element={<ResetPasswordPage />} />
+        <Route element={<GuestOnly />}>
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="reset-password" element={<ResetPasswordPage />} />
+        </Route>
         <Route path="terms" element={<PlaceholderPage title="Terms of Service" />} />
         <Route path="privacy" element={<PlaceholderPage title="Privacy Policy" />} />
         <Route path="design-system" element={<DesignSystemPage />} />
       </Route>
 
-      <Route path="/app" element={<AppShell />}>
+      <Route element={<RequireAuth />}>
+        <Route path="/app" element={<AppShell />}>
         <Route element={<DashboardLayout />}>
           <Route index element={<DashboardPage />} />
         </Route>
@@ -157,25 +162,33 @@ export const AppRoutes: React.FC = () => {
         <Route path="assessments/:assessmentId/take" element={<AssessmentPlayerPage />} />
         <Route path="assessments/:assessmentId/results" element={<AssessmentResultsPage />} />
         <Route path="progress" element={<ProgressPage />} />
-        <Route path="teach" element={<TeacherDashboard />} />
-        <Route path="teach/subjects" element={<TeachSubjectLibrary />} />
-        <Route path="teach/subjects/:subjectId" element={<TeachSubjectDetail />} />
-        <Route path="teach/lessons/new" element={<LessonForm />} />
-        <Route path="teach/lessons/:lessonId/edit" element={<LessonForm />} />
-        <Route path="teach/classes" element={<ClassList />} />
-        <Route path="teach/classes/:classId" element={<ClassDetail />} />
-        <Route path="teach/progress" element={<ProgressView />} />
-        <Route path="teach/assessments" element={<AssessmentList />} />
-        <Route path="teach/assessments/:assessmentId" element={<AssessmentEditor />} />
-        <Route path="parent" element={<ParentDashboard />} />
-        <Route path="parent/children/:childId" element={<ChildDetail />} />
-        <Route path="parent/assessments" element={<ParentAssessments />} />
-        <Route path="parent/activity" element={<ParentActivity />} />
-        <Route path="admin" element={<PlaceholderPage title="Admin Console" />} />
+        <Route element={<RequireRole roles={['teacher', 'admin']} />}>
+          <Route path="teach" element={<TeacherDashboard />} />
+          <Route path="teach/subjects" element={<TeachSubjectLibrary />} />
+          <Route path="teach/subjects/:subjectId" element={<TeachSubjectDetail />} />
+          <Route path="teach/lessons/new" element={<LessonForm />} />
+          <Route path="teach/lessons/:lessonId/edit" element={<LessonForm />} />
+          <Route path="teach/classes" element={<ClassList />} />
+          <Route path="teach/classes/:classId" element={<ClassDetail />} />
+          <Route path="teach/progress" element={<ProgressView />} />
+          <Route path="teach/assessments" element={<AssessmentList />} />
+          <Route path="teach/assessments/:assessmentId" element={<AssessmentEditor />} />
+        </Route>
+        <Route element={<RequireRole roles={['parent']} />}>
+          <Route path="parent" element={<ParentDashboard />} />
+          <Route path="parent/children/:childId" element={<ChildDetail />} />
+          <Route path="parent/assessments" element={<ParentAssessments />} />
+          <Route path="parent/activity" element={<ParentActivity />} />
+        </Route>
+        <Route element={<RequireRole roles={['admin']} />}>
+          <Route path="admin" element={<PlaceholderPage title="Admin Console" />} />
+        </Route>
         <Route path="settings" element={<PlaceholderPage title="Settings" />} />
         <Route path="profile" element={<PlaceholderPage title="Profile" />} />
+        </Route>
       </Route>
 
+      <Route path="/403" element={<ForbiddenPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
