@@ -3,6 +3,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Spinner } from '@/components/ui/spinner';
 import { useAuth } from '@/hooks/use-auth';
 import type { UserRole } from '@/features/auth/types';
+import { getDefaultRouteForRole } from '@/features/auth/utils';
 
 const AuthLoading: React.FC = () => (
   <div className="flex min-h-[50vh] items-center justify-center" role="status" aria-label="Checking authentication">
@@ -33,6 +34,6 @@ export const RequireRole: React.FC<RequireRoleProps> = ({ roles }) => {
 export const GuestOnly: React.FC = () => {
   const { isAuthenticated, isLoading, role } = useAuth();
   if (isLoading) return <AuthLoading />;
-  if (isAuthenticated) return <Navigate to={role === 'parent' ? '/app/parent' : '/app'} replace />;
+  if (isAuthenticated && role) return <Navigate to={getDefaultRouteForRole(role)} replace />;
   return <Outlet />;
 };

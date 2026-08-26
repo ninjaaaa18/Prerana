@@ -14,6 +14,7 @@ import { PasswordField } from '../components/PasswordField';
 import { RoleSelector } from '../components/RoleSelector';
 import { getAuthErrorMessage } from '@/context/auth-context';
 import { useAuth } from '@/hooks/use-auth';
+import { getDefaultRouteForRole } from '../utils';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ export const RegisterPage: React.FC = () => {
         password: values.password,
         role: values.role,
       });
-      navigate(values.role === 'parent' ? '/app/parent' : '/app');
+      navigate(getDefaultRouteForRole(values.role));
     } catch (error) {
       setSubmitError(getAuthErrorMessage(error));
     }

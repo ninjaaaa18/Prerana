@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, LogIn } from 'lucide-react';
@@ -15,9 +15,11 @@ import { PasswordField } from '../components/PasswordField';
 import { SocialLoginButton } from '../components/SocialLoginButton';
 import { getAuthErrorMessage } from '@/context/auth-context';
 import { useAuth } from '@/hooks/use-auth';
+import { getDefaultRouteForRole } from '../utils';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   const [submitError, setSubmitError] = React.useState<string | null>(null);
   const {
@@ -33,7 +35,8 @@ export const LoginPage: React.FC = () => {
     setSubmitError(null);
     try {
       const user = await login(values.email, values.password);
-      navigate(user.role === 'parent' ? '/app/parent' : '/app');
+      const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname;
+      navigate(from || getDefaultRouteForRole(user.role), { replace: true });
     } catch (error) {
       setSubmitError(getAuthErrorMessage(error));
     }

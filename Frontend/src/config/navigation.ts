@@ -40,6 +40,7 @@ export const MANAGE_NAV_SECTIONS: NavSection[] = [
   {
     label: 'Manage',
     items: [
+      { label: 'Parent Mission Control', route: '/app/parent', icon: 'Orbit', roles: ['parent'] },
       { label: 'Teach', route: '/app/teach', icon: 'Presentation', roles: ['teacher', 'admin'] },
       { label: 'Admin Console', route: '/app/admin', icon: 'Shield', roles: ['admin'] },
     ],

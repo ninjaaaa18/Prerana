@@ -5,6 +5,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { UserAvatar } from '@/components/layout/UserAvatar';
 import { NAV_VERSION } from '@/config/navigation';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
 
 export interface SidebarFooterProps {
   collapsed?: boolean;
@@ -22,6 +23,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
   email,
   className,
 }) => {
+  const { logout } = useAuth();
   const settingsButton = (
     <NavLink to="/app/settings" aria-label="Settings" className={actionClass}>
       <Settings className="h-4 w-4" />
@@ -29,7 +31,12 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
   );
 
   const logoutButton = (
-    <button type="button" aria-label="Log out" className={cn(actionClass, 'hover:text-rose-300')}>
+    <button
+      type="button"
+      aria-label="Log out"
+      onClick={() => void logout()}
+      className={cn(actionClass, 'hover:text-rose-300')}
+    >
       <LogOut className="h-4 w-4" />
     </button>
   );
