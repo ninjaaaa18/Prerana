@@ -1,0 +1,23 @@
+warning: in the working copy of 'Backend/prisma/schema.prisma', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Backend/src/routes/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Frontend/src/features/subjects/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Frontend/src/features/subjects/pages/ChapterDetailPage.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Frontend/src/features/subjects/pages/SubjectDetailPage.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Frontend/src/features/subjects/pages/SubjectsPage.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Frontend/src/features/teach/components/TeachSubjectCard.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Frontend/src/features/teach/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Frontend/src/features/teach/pages/LessonForm.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Frontend/src/features/teach/pages/TeachSubjectDetail.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Frontend/src/features/teach/pages/TeachSubjectLibrary.tsx', LF will be replaced by CRLF the next time Git touches it
+ Backend/prisma/schema.prisma                       |  69 [32m++++++++[m
+ Backend/src/routes/index.ts                        |   2 [32m+[m
+ Frontend/src/features/subjects/index.ts            |   4 [32m+[m
+ .../features/subjects/pages/ChapterDetailPage.tsx  |  73 [32m++++[m[31m----[m
+ .../features/subjects/pages/SubjectDetailPage.tsx  |  49 [32m++++[m[31m--[m
+ .../src/features/subjects/pages/SubjectsPage.tsx   |  49 [32m+++++[m[31m-[m
+ .../features/teach/components/TeachSubjectCard.tsx |  14 [32m+[m[31m-[m
+ Frontend/src/features/teach/index.ts               |   1 [32m+[m
+ Frontend/src/features/teach/pages/LessonForm.tsx   | 184 [32m++++++++++++++++[m[31m-----[m
+ .../features/teach/pages/TeachSubjectDetail.tsx    |  33 [32m+++[m[31m-[m
+ .../features/teach/pages/TeachSubjectLibrary.tsx   | 125 [32m+++++++++++[m[31m---[m
+ 11 files changed, 465 insertions(+), 138 deletions(-)

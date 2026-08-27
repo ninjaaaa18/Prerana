@@ -11,6 +11,7 @@ import {
   type AuthUser,
 } from '@/features/auth/services/auth.service';
 import type { UserRole } from '@/features/auth/types';
+import { previewUser, UI_PREVIEW_ENABLED } from '@/lib/ui-preview'; // LOCAL UI PREVIEW ONLY — REMOVE BEFORE PRODUCTION
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -38,8 +39,14 @@ const clearStoredSession = (): void => {
 export const getRefreshToken = (): string | null => getStoredRefreshToken();
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = React.useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
+  // LOCAL UI PREVIEW ONLY — REMOVE BEFORE PRODUCTION
+  // When UI_PREVIEW_ENABLED is true (local dev only), seed the auth context
+  // with a minimal mock user so every protected screen renders without login.
+  // This never activates in production builds.
+  const [user, setUser] = React.useState<AuthUser | null>(
+    UI_PREVIEW_ENABLED ? previewUser : null
+  );
+  const [isLoading, setIsLoading] = React.useState(UI_PREVIEW_ENABLED ? false : true);
 
   const applyAuthResult = React.useCallback((result: AuthResult): void => {
     storeAuthResult(result);
@@ -65,6 +72,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
         if (!cancelled) setIsLoading(false);
       }
     };
+    if (UI_PREVIEW_ENABLED) return; // LOCAL UI PREVIEW ONLY — REMOVE BEFORE PRODUCTION
     void restoreSession();
     return () => {
       cancelled = true;
@@ -76,6 +84,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
       clearStoredSession();
       setUser(null);
     };
+    if (UI_PREVIEW_ENABLED) return; // LOCAL UI PREVIEW ONLY — REMOVE BEFORE PRODUCTION
     return authEvents.onExpired(handleSessionExpired);
   }, []);
 
@@ -100,7 +109,10 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
   const logout = async (): Promise<void> => {
     const refreshToken = getStoredRefreshToken();
     clearStoredSession();
-    setUser(null);
+    // LOCAL UI PREVIEW ONLY — REMOVE BEFORE PRODUCTION
+    if (!UI_PREVIEW_ENABLED) {
+      setUser(null);
+    }
     try {
       await logoutRequest(refreshToken ?? undefined);
     } catch {

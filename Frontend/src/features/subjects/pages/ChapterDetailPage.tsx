@@ -54,13 +54,31 @@ export const ChapterDetailPage: React.FC = () => {
   }
 
   const lessons = (apiChapter.lessons ?? []).map(adaptApiLesson);
-  const progress = lessons.length > 0 ? 0 : 0;
+  const progress = 0;
   const durationMinutes = lessons.reduce((sum, l) => sum + l.readingMinutes, 0);
 
   return (
     <div className="space-y-8">
       <Reveal y={16}>
         <div className="space-y-5">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-slate-400">
+            <Link
+              to="/app/subjects"
+              className="font-medium transition-colors hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-md"
+            >
+              Subjects
+            </Link>
+            <span className="text-slate-600" aria-hidden="true">/</span>
+            <Link
+              to={`/app/subjects/${subjectId}`}
+              className="max-w-[10rem] truncate transition-colors hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-md"
+            >
+              {apiChapter.subject?.title ?? 'Subject'}
+            </Link>
+            <span className="text-slate-600" aria-hidden="true">/</span>
+            <span className="truncate font-semibold text-slate-200">{apiChapter.title}</span>
+          </nav>
+
           <SubjectBanner
             color={apiChapter.subject?.color ?? '#6366f1'}
             name={apiChapter.title}
@@ -108,7 +126,7 @@ export const ChapterDetailPage: React.FC = () => {
       <div className="space-y-4">
         <SectionTitle
           title="Lessons"
-          subtitle="Preview every lesson in this chapter"
+          subtitle={lessons.length === 0 ? 'No lessons in this chapter yet' : `${lessons.length} lesson${lessons.length === 1 ? '' : 's'} to explore`}
           action={
             <Link
               to={`/app/subjects/${subjectId}`}
@@ -119,7 +137,14 @@ export const ChapterDetailPage: React.FC = () => {
             </Link>
           }
         />
-        <LessonGrid lessons={lessons} />
+        {lessons.length === 0 ? (
+          <EmptyState
+            title="No lessons yet"
+            description="Lessons for this chapter will appear here once they are added."
+          />
+        ) : (
+          <LessonGrid lessons={lessons} />
+        )}
       </div>
     </div>
   );

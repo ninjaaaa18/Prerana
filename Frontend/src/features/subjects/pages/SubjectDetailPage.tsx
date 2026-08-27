@@ -86,6 +86,18 @@ export const SubjectDetailPage: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-slate-400">
+        <Link
+          to="/app/subjects"
+          className="inline-flex items-center gap-1.5 font-medium transition-colors hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-md"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          Subjects
+        </Link>
+        <span className="text-slate-600" aria-hidden="true">/</span>
+        <span className="truncate font-semibold text-slate-200">{subject.name}</span>
+      </nav>
+
       <Reveal y={16}>
         <SubjectHero subject={subject} />
       </Reveal>
@@ -93,7 +105,7 @@ export const SubjectDetailPage: React.FC = () => {
       <div className="space-y-4">
         <SectionTitle
           title="Chapters"
-          subtitle={`${chapters.length} chapters to explore`}
+          subtitle={`${chapters.length} of ${apiChapters?.length ?? chapters.length} chapter${(apiChapters?.length ?? chapters.length) === 1 ? '' : 's'} shown`}
           action={
             <Link
               to="/app/subjects"

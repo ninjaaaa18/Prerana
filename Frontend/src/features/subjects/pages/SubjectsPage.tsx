@@ -90,13 +90,18 @@ export const SubjectsPage: React.FC = () => {
   return (
     <div className="space-y-8">
       <Reveal y={16}>
-        <div className="space-y-2">
-          <h1 className="font-display text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">
-            Subjects
-          </h1>
-          <p className="max-w-2xl text-sm leading-relaxed text-slate-400">
-            Explore subjects like worlds — each one packed with chapters and lessons waiting for
-            you.
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">
+              Subjects
+            </h1>
+            <p className="max-w-2xl text-sm leading-relaxed text-slate-400">
+              Explore subjects like worlds — each one packed with chapters and lessons waiting for
+              you.
+            </p>
+          </div>
+          <p className="inline-flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1 text-xs font-semibold text-slate-300">
+            {subjects.length} subject{subjects.length === 1 ? '' : 's'}
           </p>
         </div>
       </Reveal>
@@ -114,11 +119,19 @@ export const SubjectsPage: React.FC = () => {
       />
 
       {filtered.length === 0 ? (
-        <EmptyState
-          icon={<SearchX className="h-8 w-8" />}
-          title="No subjects found"
-          description="Try adjusting your search or filters to find what you're looking for."
-        />
+        subjects.length === 0 ? (
+          <EmptyState
+            icon={<SearchX className="h-8 w-8" />}
+            title="No subjects yet"
+            description="New subjects will appear here when they become available to explore."
+          />
+        ) : (
+          <EmptyState
+            icon={<SearchX className="h-8 w-8" />}
+            title="No subjects found"
+            description="Try adjusting your search or filters to find what you're looking for."
+          />
+        )
       ) : (
         <SubjectGrid subjects={filtered} />
       )}
